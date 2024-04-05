@@ -539,33 +539,29 @@ intersource_less_40_cgMLST <- intersource_less_40_cgMLST %>% mutate(col1 = pmin(
 
 
 
-intersource_less_60_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 60) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
-
-intersource_less_60_cgMLST <- intersource_less_60_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
-
-
-
-intersource_less_80_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 80) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
-
-intersource_less_80_cgMLST <- intersource_less_80_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
-
-
-
-
 intersource_less_100_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_100_cgMLST <- intersource_less_100_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
+intersource_less_500_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 500) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_500_cgMLST <- intersource_less_500_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+intersource_less_1000_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 1000) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_1000_cgMLST <- intersource_less_1000_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
 
 
 sets <- list('5' = intersource_less_5_cgMLST$name_combo,
              '20' = intersource_less_20_cgMLST$name_combo,
              '40' = intersource_less_40_cgMLST$name_combo,
-             '60' = intersource_less_60_cgMLST$name_combo,
-             '80' = intersource_less_80_cgMLST$name_combo,
-             '100' = intersource_less_100_cgMLST$name_combo)
+             '100' = intersource_less_60_cgMLST$name_combo,
+             '500' = intersource_less_500_cgMLST$name_combo,
+             '1000' = intersource_less_1000_cgMLST$name_combo)
 
 # Generate and plot the Euler diagram
 fit <- euler(sets)
