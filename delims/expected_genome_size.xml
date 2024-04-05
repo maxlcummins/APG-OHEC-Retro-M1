@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<genome_size_response>
+<input>
+ <species_taxid>562</species_taxid>
+ <length>1</length>
+</input>
+ <organism_name>Escherichia coli</organism_name>
+ <species_taxid>562</species_taxid>
+ <size_source>species</size_source>
+ <genome_count>179907</genome_count>
+ <expected_ungapped_length>5150000</expected_ungapped_length>
+ <minimum_ungapped_length>4000000</minimum_ungapped_length>
+ <maximum_ungapped_length>6300000</maximum_ungapped_length>
+ <length_status>too_small</length_status>
+</genome_size_response>

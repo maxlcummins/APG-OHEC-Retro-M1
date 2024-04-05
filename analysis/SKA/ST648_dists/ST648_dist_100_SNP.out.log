@@ -1,0 +1,137 @@
+
+SKA: Split Kmer Analysis
+Version: 1.0
+Citation: TBA
+
+Calculating pairwise distances for 119 files
+Clusters will be created for isolates that are within 100 SNPs of one another and share at least 95% of the split kmers of the isolate with fewer kmers
+Distances will be written to ST648_dists/ST648_dist_100_SNP.distances.tsv
+Clusters will be written to files with the prefix ST648_dists/ST648_dist_100_SNP
+
+Collecting number of samples 
+Found 119 samples in 119 files
+Reading ST648/AusGEM_00575.skf
+Reading ST648/AusGEM_00577.skf
+Reading ST648/AusGEM_00592.skf
+Reading ST648/AusGEM_00648.skf
+Reading ST648/AusGEM_00804.skf
+Reading ST648/AusGEM_01707.skf
+Reading ST648/AusGEM_01708.skf
+Reading ST648/AusGEM_01709.skf
+Reading ST648/AusGEM_01710.skf
+Reading ST648/AusGEM_01711.skf
+Reading ST648/AusGEM_01712.skf
+Reading ST648/AusGEM_01713.skf
+Reading ST648/AusGEM_01714.skf
+Reading ST648/AusGEM_01924.skf
+Reading ST648/AusGEM_01981.skf
+Reading ST648/AusGEM_01982.skf
+Reading ST648/AusGEM_02031.skf
+Reading ST648/AusGEM_02032.skf
+Reading ST648/AusGEM_02042.skf
+Reading ST648/AusGEM_02045.skf
+Reading ST648/AUSMDU00004542.skf
+Reading ST648/AUSMDU00004893.skf
+Reading ST648/AUSMDU00005005.skf
+Reading ST648/AUSMDU00008513.skf
+Reading ST648/AUSMDU00008551.skf
+Reading ST648/AUSMDU00008595.skf
+Reading ST648/AUSMDU00008625.skf
+Reading ST648/AUSMDU00008638.skf
+Reading ST648/AUSMDU00008644.skf
+Reading ST648/AUSMDU00009504.skf
+Reading ST648/AUSMDU00010596.skf
+Reading ST648/AUSMDU00010606.skf
+Reading ST648/AUSMDU00011325.skf
+Reading ST648/AUSMDU00011355.skf
+Reading ST648/AUSMDU00011370.skf
+Reading ST648/AUSMDU00011818.skf
+Reading ST648/AUSMDU00011888.skf
+Reading ST648/AUSMDU00012378.skf
+Reading ST648/AUSMDU00013459.skf
+Reading ST648/AUSMDU00013702.skf
+Reading ST648/AUSMDU00014655.skf
+Reading ST648/AUSMDU00014721.skf
+Reading ST648/AUSMDU00015262.skf
+Reading ST648/AUSMDU00015543.skf
+Reading ST648/AUSMDU00015560.skf
+Reading ST648/AUSMDU00015584.skf
+Reading ST648/AUSMDU00015623.skf
+Reading ST648/AUSMDU00015685.skf
+Reading ST648/AUSMDU00015757.skf
+Reading ST648/AUSMDU00016001.skf
+Reading ST648/AUSMDU00016434.skf
+Reading ST648/AUSMDU00016535.skf
+Reading ST648/AUSMDU00017113.skf
+Reading ST648/AUSMDU00017118.skf
+Reading ST648/AUSMDU00017148.skf
+Reading ST648/AUSMDU00017250.skf
+Reading ST648/AUSMDU00017266.skf
+Reading ST648/AUSMDU00017270.skf
+Reading ST648/AUSMDU00017422.skf
+Reading ST648/AUSMDU00017961.skf
+Reading ST648/AUSMDU00018824.skf
+Reading ST648/AUSMDU00018869.skf
+Reading ST648/AUSMDU00019050.skf
+Reading ST648/AUSMDU00019331.skf
+Reading ST648/AUSMDU00019339.skf
+Reading ST648/AUSMDU00019916.skf
+Reading ST648/AUSMDU00020288.skf
+Reading ST648/AUSMDU00021465.skf
+Reading ST648/AUSMDU00021633.skf
+Reading ST648/AUSMDU00022272.skf
+Reading ST648/AUSMDU00022362.skf
+Reading ST648/AUSMDU00022564.skf
+Reading ST648/AUSMDU00022676.skf
+Reading ST648/AUSMDU00023161.skf
+Reading ST648/AUSMDU00023209.skf
+Reading ST648/AUSMDU00023404.skf
+Reading ST648/AUSMDU00024594.skf
+Reading ST648/AUSMDU00024937.skf
+Reading ST648/AUSMDU00026895.skf
+Reading ST648/AUSMDU00027305.skf
+Reading ST648/AUSMDU00034389.skf
+Reading ST648/AUSMDU00036295.skf
+Reading ST648/AUSMDU00036798.skf
+Reading ST648/AUSMDU00037976.skf
+Reading ST648/AUSMDU00040707.skf
+Reading ST648/AUSMDU00040769.skf
+Reading ST648/AUSMDU00044332.skf
+Reading ST648/AUSMDU00048973.skf
+Reading ST648/AUSMDU00061730.skf
+Reading ST648/AUSMDU00062657.skf
+Reading ST648/AUSMDU00067157.skf
+Reading ST648/AUSMDU00067741.skf
+Reading ST648/AUSMDU00070162.skf
+Reading ST648/ERR4254600.skf
+Reading ST648/ERR5355635.skf
+Reading ST648/ERR5355839.skf
+Reading ST648/ERR5355865.skf
+Reading ST648/SRR11094176.skf
+Reading ST648/SRR11094231.skf
+Reading ST648/SRR11341606.skf
+Reading ST648/SRR11341625.skf
+Reading ST648/SRR4067469.skf
+Reading ST648/SRR4241831.skf
+Reading ST648/SRR4241832.skf
+Reading ST648/SRR4241835.skf
+Reading ST648/SRR4241836.skf
+Reading ST648/SRR4241837.skf
+Reading ST648/SRR4241839.skf
+Reading ST648/SRR6456001.skf
+Reading ST648/SRR6456037.skf
+Reading ST648/SRR7724561.skf
+Reading ST648/SRR7724579.skf
+Reading ST648/SRR7724799.skf
+Reading ST648/TEA_12_GNB_311.skf
+Reading ST648/TEA_30_1_R8.skf
+Reading ST648/TEA_GNB_2781.skf
+Reading ST648/TEA_GNB_2809.skf
+Reading ST648/TEA_GNB_2838.skf
+Reading ST648/TEA_GNB_3697.skf
+13341969 kmers read from 119 samples in 119 files
+Calculating SNP distances
+Printing clusters to ST648_dists/ST648_dist_100_SNP.clusters.tsv
+Printing distances to ST648_dists/ST648_dist_100_SNP.distances.tsv
+Done
+Total time required: 440.986s

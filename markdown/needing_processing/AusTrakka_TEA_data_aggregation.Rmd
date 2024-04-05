@@ -1,0 +1,754 @@
+---
+title: "AusTrakka_Data Aggregate"
+author: "Max Cummins"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#Read in our packages
+library(tidyverse)
+library(ggplot2)
+library(xml2)
+
+#Define our not in function
+`%nin%` <- Negate(`%in%`)
+```
+
+# Quality control AusTrakka Genomes
+
+Here we perform genomic analysis on our AusTrakka genomes.
+
+## Define our file paths
+
+```{r}
+
+### TEA genome data
+TEA_abritamr_path <- "analysis/abritamr_resistance.txt"
+
+TEA_mlst_path <- "analysis/mlst.txt"
+
+TEA_clermontyping_path <- "analysis/clermontyping.txt"
+
+TEA_ectyper_path <- "analysis/ectyper.txt"
+
+TEA_fimtyper_path <- "analysis/fimtyper.txt"
+
+TEA_IncF_RST_path <- "analysis/IncF_RST.txt"
+
+genotype_path_TEA <- "analysis/genotype.txt"
+```
+
+
+
+## Read in our genomic datasets
+
+```{r Merge_analysis_outputs, include=FALSE}
+
+#Read in all our paths starting with TEA
+for(i in ls(pattern = "TEA_")){
+        #First check if any have been read in yet
+        if(!exists("gene_df")){
+                #Read in first df
+                gene_df <- read_delim(file = get(i), delim = "\t", show_col_types = FALSE)
+                #Create a prefix for colnames based on filename
+                colname_prefix <- basename(get(i))
+                #Trim prefix
+                colname_prefix <- gsub("\\.txt", "", colname_prefix)
+                #Rename our columns with a prefix (e.g. abritamr_resistance..)
+                gene_df <- gene_df %>% rename_with(~str_c(colname_prefix,"..", .), everything())
+                #Fix name column back to name
+                colnames(gene_df) <- gsub(".*\\.name", "name", colnames(gene_df))
+        }
+        else{
+                #Read in next df
+               df_temp <- read_delim(file = get(i), delim = "\t", show_col_types = FALSE)
+               #Change Name to name (Cant remember which table this is... Phylogroup?)
+               colnames(df_temp) <- gsub("Name", "name", colnames(df_temp))
+               #As before, creating a prefix
+               colname_prefix <- basename(get(i))
+               #As before, trimming prefix
+               colname_prefix <- gsub("\\.txt", "", colname_prefix)
+               #Changing column names
+               df_temp <- df_temp %>% rename_with(~str_c(colname_prefix,"..", .), everything())
+               #Fix name column back to name
+               colnames(df_temp) <- gsub(".*\\.name", "name", colnames(df_temp))
+               #Bind our dataframes into one
+               gene_df <- full_join(gene_df, df_temp, by = "name")
+        }
+}
+
+```
+
+```{r message=TRUE, warning=TRUE}
+#Read in abricate data for tea dataset
+abricateR::abricateR(abricate_in = genotype_path_TEA, output = "TEA_abricate", writecsv = FALSE)
+
+#Rename our abricate data
+abricate <- TEA_abricate_simple_summary_N90L90
+
+#Add a prefix for the abricate columns
+abricate <- abricate %>% rename_with(~gsub("^", "ABRICATE..", .x)) %>% rename("name" = "ABRICATE..name") %>% rename("ColV" = "ABRICATE..ColV")
+
+#Combine both genotypic and abricate data
+geno <- inner_join(gene_df, abricate)
+
+#Remove all objects except geno and geno_no_abric
+rm(list= ls()[!(ls() %in% c("geno", "%nin%"))])
+
+```
+
+
+## Removing unwanted genomes
+
+First we must remove genomes which we do not want to include in downstream
+analysis. Mostly this will include our genomes which failed QC but we may also
+want to remove some extras based on a user defined list. We will do the latter
+as well to remove some Wastewater and Gull sourced genomes we are not yet able
+to include in our analysis.
+
+```{r file_paths, echo=FALSE}
+#Read in QC data
+QC_pass_names <- read_csv("delims/QC_pass_names.txt", show_col_types = FALSE)
+
+#Remove samples which failed QC
+geno <- geno %>% filter(name %in% QC_pass_names$name)
+
+#Read in the names of the quarantined samples
+WW_quarantine <- read_csv("delims/purgelist.txt", col_names = 'name', show_col_types = FALSE)
+
+#Remove WW samples
+geno <- geno %>% filter(name %nin% WW_quarantine$name)
+
+#Generate list of potential gull quarantined samples (2019 cohort unpublished)
+Gull_quarantine <- read_csv("delims/purgelist2.txt", col_names = 'name', show_col_types = FALSE)
+
+#Remove gull samples
+geno <- geno %>% filter(name %nin% Gull_quarantine$name)
+
+#Remove all objects except geno and geno_no_abric
+rm(list= ls()[!(ls() %in% c("geno", "%nin%"))])
+```
+
+## Read in Metadata
+
+```{r file_paths, echo=FALSE}
+#Read in QC data
+metadata <- read_delim("delims/metadata.csv", 
+                   delim = ",",
+                   escape_double = FALSE,
+                   trim_ws = TRUE)
+
+#Collapse environmental and waste into a single category
+metadata <- metadata %>% mutate(Revised_Source_Niche = fct_collapse(Revised_Source_Niche, Environmental = c("Environmental", "Waste")))
+
+#Set revised source type to be revised source niche if it is 
+metadata <- metadata %>% mutate(Revised_Source_Type = if_else(is.na(Revised_Source_Type), as.character(Revised_Source_Niche), Revised_Source_Type))
+
+#Fix collection category for TEA
+metadata <- metadata %>% mutate(Collection = replace_na(Collection, replace = "TEA"))
+#Fix collection category for TEA
+metadata <- metadata %>% mutate(Intestinal_or_Extraintestinal = if_else(Collection == "TEA", replace_na(Intestinal_or_Extraintestinal, replace = "Other"), Intestinal_or_Extraintestinal))
+
+#Collapse environmental and waste into a single category
+metadata <- metadata %>% mutate(Revised_Source_Niche = fct_collapse(Revised_Source_Niche, 'Wild Animal' = c("Wild Animal", "Captive Animal")))
+
+#Replace two troublesome sample names (-B is a problem)
+metadata$name <- gsub("^AUSMDU00032107$", "AUSMDU00032107-B", metadata$name)
+metadata$name <- gsub("^AUSMDU00031978$", "AUSMDU00031978-B", metadata$name)
+
+#Read in our table for converting between TEA names
+convert_tea <- read_csv("delims/name_convert_TEA.txt", show_col_types = FALSE)
+
+#join our table containing TEA names
+metadata <- full_join(convert_tea, metadata, by = "name")
+
+#Replace names according to conditionals which only operate on TEA genomes
+metadata <- metadata %>% mutate(Name = ifelse(!is.na(tea_name), name, Name)) %>% mutate(name = ifelse(!is.na(tea_name), tea_name, name)) %>% select(-tea_name)
+
+#Filter out extra genomes from Touchon et al which we didnt download
+metadata <- metadata %>% filter(!grepl("ESCO", name))
+
+#Remove samples which failed QC or are quarantined
+metadata <- metadata %>% filter(name %in% geno$name)
+
+#Remove samples for which no metadata exists
+# "AUSMDU00038293" "AUSMDU00047881" "AUSMDU00038291" "AUSMDU00038292" "AUSMDU00038294" "AUSMDU00038290"
+# "AUSMDU00038295"
+#These aren't meant to be included.
+geno <- geno %>% filter(name %in% metadata$name)
+
+
+#Read in our tree
+tree <- ggtree::read.tree("analysis/pad.nwk")
+
+#Remove quotes from sample names
+tree$tip.label <- gsub("'", "", tree$tip.label)
+
+#Remove everything not in our tree (e.g. didnt cgMLST properly)
+geno <- geno %>% filter(name %in% tree$tip.label)
+```
+
+
+```{r}
+library(highcharter)
+library(htmlwidgets)
+library(dplyr)
+
+sankey1 <- metadata %>% filter(name %in% tree$tip.label) %>% select(Revised_Source_Niche, State, Intestinal_or_Extraintestinal)
+
+sankey1 <- sankey1 %>% mutate(State = replace_na(State, "Unknown"))
+
+sankey1 <- apply(sankey1, 2, FUN = function(x) paste0(x, " (",as.data.frame(table(x)[x])[,2],"/", as.character(length(tree$tip.label)), ")"))
+
+sankey1 <- as.data.frame(sankey1)
+
+hchart(data_to_sankey(sankey1), "sankey", name = "Collection Breakdown")  %>%
+        hc_plotOptions(series = list(dataLabels = list(style = list(fontSize = "20px"))))
+```
+
+
+```{r, MGEs}
+
+#Create a binary table of presence absence for genes from abricate
+geno_binary <- geno %>% mutate(across(starts_with('ABRICATE'), ~replace_na(.x, 0))) %>% mutate(across(starts_with('ABRICATE'), ~replace(.x, . > 1, 1)))
+
+#Combine with our metadata
+genometa <- inner_join(metadata, geno_binary, by = "name")
+
+#Combine with our metadata
+genometa_nonbinary <- inner_join(metadata, geno, by = "name") %>% mutate(across(starts_with('ABRICATE'), ~replace_na(.x, 0)))
+
+ColV_by_source_count <- genometa %>% group_by(ColV, Revised_Source_Niche) %>% summarise(counts = n())
+
+g <- ggplot(genometa_nonbinary, mapping = aes(fill = Revised_Source_Niche, x = ColV))
+
+Col <- c("Companion Animal" = "#59398d",
+         "Environmental" = "#709b46",
+         "Food" = "#c09f3d",
+         "Human" = "#48c595",
+         "Livestock" =  "#c26bbc",
+         "Wild Animal" = "#b9553d")
+
+g + geom_bar(position = "fill", stat = "count") + 
+        labs(x="Carry a ColV-plasmid",
+             y="Proportion of genomes") +
+        scale_fill_manual(values = Col) +
+        geom_text(aes(label = paste0("n=", after_stat(count))), stat='count', position = position_fill(vjust = 0.5), size = 10) +
+  theme_classic()
+
+```
+
+
+```{r}
+
+library(pheatmap)
+
+#Read in abritamr data
+abritamr <- read_delim("analysis/abritamr_resistance.txt", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Create a list of samples in our tree
+sample_names <- tree$tip.label %>% as.data.frame() %>% rename('name' = '.')
+
+#Filter out samples not in the tree, add in those missing from dataframe
+abritamr<- left_join(sample_names, abritamr)
+
+#Prepend abritamr cols with ABRITAMR
+colnames(abritamr) <- gsub("^", "ABRITAMR.", colnames(abritamr))
+
+#Get rid of spaces from column names
+colnames(abritamr) <- gsub(" ", "_", colnames(abritamr))
+
+#Clean up 'name' column name for joining
+abritamr <- abritamr %>% rename("name" = "ABRITAMR.name")
+#Define the columns we wish to split (taking everything other than name)
+#To do this we identify any columns containing a comma
+cols_for_split <-
+        abritamr %>%
+        select(where(~any(grepl(",", .x)))) %>%
+        colnames()
+
+#Split concatenated data (comma separated into columns)
+decat_abritamr <- 
+        splitstackshape::cSplit(
+                indt = abritamr,
+                splitCols = cols_for_split,
+                sep = ",",
+                direction = "wide")
+
+#Clean column names
+decat_abritamr <- decat_abritamr %>%
+        #Remove prefix "ABRITAMR."
+        rename_with(.cols = everything(),
+                    ~str_replace(.x,
+                                pattern = "ABRITAMR\\.",
+                                replacement = ""
+                                   )
+               )
+
+#Next I need to make a list of genes associated with a given antibiotic class:
+gene_by_class_by_sample <-
+        decat_abritamr %>%
+        pivot_longer(!name,
+                     names_to = "Class",
+                     values_to = "Gene",
+                     values_drop_na = TRUE
+                     )
+
+#Clean "Class" column
+gene_by_class_by_sample <- gene_by_class_by_sample %>%
+        #Remove trailing underscore and numbers"
+        mutate(Class = str_replace(Class,
+                                   pattern = "_[0-4]$",
+                                   replacement = ""
+                                   )
+               )
+
+#Remove Class column - we will annotate this later on using 'gene_by_class' df
+gene_by_sample <- gene_by_class_by_sample %>%
+        select(-Class)
+
+#We now want to make a wide dataframe
+gene_by_sample <- gene_by_sample %>%
+        #Make a column indicating gene presence (for pivoting)
+        #0.5 indicates a near perfect match
+        #1.0 indicates a perfect match
+        mutate(Gene_present = if_else(
+                str_detect(
+                        string = Gene,
+                        pattern = "\\*"
+                        ),
+                0.5, 1)) %>%
+        #Remove asterisks which indicate imperfect matches
+        #These are now captured in our vallue column 'Gene_present'
+        mutate(Gene = str_replace(Gene,
+                                  pattern = "\\*",
+                                  replacement = "")) %>% 
+        #Pivot our table wider
+        #Use sum function to handle situations where genes are present at n > 1
+        pivot_wider(names_from = Gene,
+                    values_from = Gene_present,
+                    values_fill = 0,
+                    values_fn = sum)
+
+#Move our name column to be our rownames
+gene_by_sample <- gene_by_sample %>% column_to_rownames(var = "name")
+
+#Replace instances where we have multiple hits (perfect or otherwise)
+#with 1.5
+gene_by_sample <- gene_by_sample %>% mutate(across(everything(), ~if_else(.x > 1.5, 1.5, .x)))
+
+#Remove name column
+gene_by_class <- gene_by_class_by_sample %>%
+        #Remove name column
+        select(-name)
+
+#Generate our list of unique gene names and their associated classes
+gene_by_class <- gene_by_class %>%
+        #Get rid of asterisks in our gene names        
+        mutate(Gene = str_replace(Gene,
+                                  pattern = "\\*",
+                                  replacement = "")) %>%
+        #Remove multiple instances of the same gene
+        unique() %>%
+        #Arrange by Class
+        arrange(Class, Gene)
+
+gene_by_sample %>%
+        colSums() %>%
+        as.data.frame() %>%
+        rownames_to_column('Gene') %>%
+        left_join(gene_by_class, by = "Gene") %>%
+        rename(count = '.') %>%
+        group_by(Gene, count) %>%
+        summarise(Class = paste0(Class, collapse = "/")) %>%
+        mutate(perc = as.numeric(scales::percent(count/nrow(gene_by_sample), suffix = ""))) %>%
+        filter(perc > 5) %>% 
+        select(-count) %>% 
+        pivot_wider(names_from = Class,
+                    values_from = perc,
+                    values_fill = 0) %>%
+        column_to_rownames('Gene') %>%
+        pheatmap(fontsize_row = 4)
+
+```
+
+
+```{r ST_exploration, echo=FALSE}
+library(ComplexHeatmap)
+library(grid)
+
+#Generate a count of known STs
+known_STs <- genometa %>% filter(mlst..ST != "-") %>% select(starts_with("mlst..ST")) %>% unique() %>% nrow()
+
+#Generate a list of samples without known STs
+novel_ST_strains <- genometa  %>% filter(mlst..ST == "-")
+
+#Count how many samples have no known ST
+count_novels <- nrow(novel_ST_strains)
+
+# Generate a count of singletons
+n_singletons <- genometa %>% select(starts_with("mlst..allele")) %>% mutate(paste_alleles = paste0(mlst..allele1, mlst..allele2, mlst..allele3, mlst..allele4, mlst..allele5, mlst..allele6, mlst..allele7)) %>% select(paste_alleles) %>% table() %>% as.data.frame() %>% filter(Freq == 1) %>% nrow()
+
+#Produce placeholder STs
+placeholder_STs <- genometa %>% select(starts_with("mlst..")) %>% filter(mlst..ST == "-") %>% select(-mlst..ST) %>% unique()%>% 
+       # filter(
+       #         !grepl("-", allele1),
+       #         !grepl("-", allele2),
+       #         !grepl("-", allele3),
+       #         !grepl("-", allele4),
+       #         !grepl("-", allele5),
+       #         !grepl("-", allele6),
+       #         !grepl("-", allele7)) %>% 
+mutate(ST_new = paste0("^^",as.character(1:nrow(.)))) %>% mutate(allele_cat = paste0(mlst..allele1, mlst..allele2, mlst..allele3, mlst..allele4, mlst..allele5, mlst..allele6, mlst..allele7)) %>% select(ST_new, allele_cat)
+
+#Produce a list of the mlsts within the collection
+genometa <- genometa %>% select(name, starts_with("mlst..")) %>% mutate(allele_cat = paste0(mlst..allele1, mlst..allele2, mlst..allele3, mlst..allele4, mlst..allele5, mlst..allele6, mlst..allele7)) %>% left_join(placeholder_STs, by = "allele_cat") %>% select(-allele_cat) %>% mutate(ST_new = if_else(is.na(ST_new), mlst..ST, ST_new)) %>% select(name, ST_new) %>% left_join(genometa)
+```
+
+## Determine CIA res status
+```{r count CIA res, echo=FALSE, fig.height=8, fig.width=12}
+
+#Read in abritamr data
+abritamr <- read_delim("analysis/abritamr_resistance.txt", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Create a list of samples in our tree
+sample_names <- tree$tip.label %>% as.data.frame() %>% rename('name' = '.') %>% mutate(name = str_replace_all(name, "\\'", ''))
+
+#Filter out samples not in the tree, add in those missing from dataframe
+abritamr<- left_join(sample_names, abritamr)
+
+#Prepend abritamr cols with ABRITAMR
+colnames(abritamr) <- gsub("^", "ABRITAMR.", colnames(abritamr))
+
+#Get rid of spaces from column names
+colnames(abritamr) <- gsub(" ", "_", colnames(abritamr))
+
+#Clean up 'name' column name for joining
+abritamr <- abritamr %>% rename("name" = "ABRITAMR.name")
+
+#Duplicate the table to determine CIA status
+CIA_table <- abritamr
+
+#Select CIA gene columns
+CIA_table <- CIA_table %>% select(name, matches('Quinolone'), matches('[^not_]ESBL'), matches('[^or_]Carbapenemase'), matches('Colistin'), matches('Macrolide'), matches('Lincosamide'))
+
+#Create a table for CIA resistance genes
+CIA_table <- CIA_table %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "glpT_[^,]+,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "uhpT_[^,]+,?",
+                                   ""))) %>%
+        #mutate(across(everything(),
+        #              ~str_replace(.x,
+        #                           "gyrA_[^,]+,?",
+        #                           ""))) %>%
+        #mutate(across(everything(),
+        #              ~str_replace(.x,
+        #                           "parC[^,]+,?",
+        #                           ""))) %>%
+        mutate(across(everything(),
+              ~str_replace(.x,
+                           "ptsI_[^,]+,?",
+                           ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "marR_[^,]+,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "blaEC-[0-9]+\\*?,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "^,",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   ",$",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~na_if(.,"")
+        ))
+
+#Replace cell contents with 1 for cells which are not empty
+CIA_table <- CIA_table %>%
+        column_to_rownames('name') %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   ".*",
+                                   "1"))) %>%
+        mutate(across(everything(),
+                      ~replace_na(.x,
+                                   "0"))) %>%
+        mutate(across(everything(),
+                      ~as.numeric(.x)))
+
+#Sum the number of CIA resistance genes and determine if greater than 1 (i.e. CIA resistant)
+CIA_res <- CIA_table %>%
+        mutate(CIA_res_status = rowSums(CIA_table)) %>%
+        select(CIA_res_status)  %>%
+        rownames_to_column('name') %>%
+        mutate(CIA_res_status = if_else(CIA_res_status >= 1, 1, 0))
+
+```
+
+
+## Determine MDR status
+
+```{r count MDR, echo=FALSE, fig.height=8, fig.width=12}
+
+#Duplicate the table to determine CIA status
+MDR_table <- abritamr %>%
+        #Remove unwanted genes
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "glpT_[^,]+,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "uhpT_[^,]+,?",
+                                   ""))) %>%
+        #mutate(across(everything(),
+        #              ~str_replace(.x,
+        #                           "gyrA_[^,]+,?",
+        #                           ""))) %>%
+        #mutate(across(everything(),
+        #              ~str_replace(.x,
+        #                           "parC[^,]+,?",
+        #                           ""))) %>%
+        mutate(across(everything(),
+             ~str_replace(.x,
+                   "ptsI_[^,]+,?",
+                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "marR_[^,]+,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "blaEC-[0-9]+\\*?,?",
+                                   ""))) %>%
+        #Remove commas at the start of a cell residual from gene deletion
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "^,",
+                                   ""))) %>%
+        #Remove commas at the end of a cell residual from gene deletion
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   ",$",
+                                   ""))) %>%
+        #Replace NAs with empty strings
+        mutate(across(everything(),
+                      ~na_if(.,"")
+        )) 
+
+#Convert to binary and numeric, convert column to rownames
+MDR_table <- MDR_table %>%
+        column_to_rownames('name') %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   ".*",
+                                   "1"))) %>%
+        mutate(across(everything(),
+                      ~replace_na(.x,
+                                   "0")))%>%
+        mutate(across(everything(),
+                      ~as.numeric(.x))) %>%
+        rownames_to_column('name')
+
+#Select Aminoglycoside resistance conferring columns
+MDR_table <- MDR_table %>% rowwise() %>%
+        mutate(Aminoglycoside_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Amikacin/Kanamycin`,
+                        `ABRITAMR.Amikacin/Kanamycin/Tobramycin`,
+                        `ABRITAMR.Amikacin/Kanamycin/Tobramycin/Quinolone`,
+                        `ABRITAMR.Aminoglycosides_(Ribosomal_methyltransferase)`,
+                        `ABRITAMR.Fosfomycin`,
+                        `ABRITAMR.Gentamicin`,
+                        `ABRITAMR.Gentamicin/Kanamycin/Tobramycin`,
+                        `ABRITAMR.Gentamicin/Tobramycin/Apramycin`,
+                        `ABRITAMR.Kanamycin`,
+                        `ABRITAMR.Other_aminoglycoside_resistance_(non-RMT)`,
+                        `ABRITAMR.Streptomycin`
+                ))
+        )) %>% 
+        mutate(Betalactam_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Beta-lactamase_(not_ESBL_or_carbapenemase)`,
+                        `ABRITAMR.Aztreonam`,
+                        #`ABRITAMR.Beta-lactamase_(unknown_spectrum)`,
+                        `ABRITAMR.Carbapenemase`,
+                        #`ABRITAMR.Carbapenemase_(KPC_variant)`,
+                        `ABRITAMR.Carbapenemase_(MBL)`,
+                        `ABRITAMR.ESBL`,
+                        `ABRITAMR.ESBL_(AmpC_type)`,
+                ))
+        )) %>% 
+        mutate(Ansamycin_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Ampicillin/Chloramphenicol/Quinolone/Rifampin/Tetracycline`,
+                        `ABRITAMR.Rifamycin`,
+                ))
+        )) %>% 
+        mutate(Chloramphenicol_phenicol_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Ampicillin/Chloramphenicol/Quinolone/Rifampin/Tetracycline`,
+                        `ABRITAMR.Chloramphenicol`,
+                        `ABRITAMR.Chloramphenicol/Florfenicol`,
+                        `ABRITAMR.Phenicol/Quinolone`,
+                ))
+        ))%>% 
+        mutate(Nirtofurantoin_resistance = `ABRITAMR.Nitrofurantoin`) %>% 
+        #mutate(Isoniazid_Triclosan_resistance = `ABRITAMR.Isoniazid/Triclosan`) %>% 
+        mutate(Polymixin_resistance = `ABRITAMR.Colistin`) %>%
+        mutate(Lincosamides_resistance = `ABRITAMR.Lincosamides`) %>% 
+        mutate(Macrolides_resistance = `ABRITAMR.Macrolide`) %>% 
+        mutate(Fluoroquinolone_quinolone_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Amikacin/Kanamycin/Tobramycin/Quinolone`,
+                        `ABRITAMR.Ampicillin/Chloramphenicol/Quinolone/Rifampin/Tetracycline`,
+                        `ABRITAMR.Phenicol/Quinolone`,
+                        `ABRITAMR.Quinolone`
+                ))
+        )) %>% 
+        mutate(Sulfonamide_resistance = `ABRITAMR.Sulfonamide`) %>%
+        mutate(Tetracycline_resistance = sum(
+                c_across(cols = c(
+                        `ABRITAMR.Tetracycline`,
+                        `ABRITAMR.Ampicillin/Chloramphenicol/Quinolone/Rifampin/Tetracycline`
+                ))
+        )) %>%
+        mutate(Trimethoprim_resistance = `ABRITAMR.Trimethoprim`)
+
+#Select columns which we created in previous step and sum them
+MDR_table_small <- MDR_table %>%
+        select(name,
+               matches("_resistance"),
+               -`ABRITAMR.Other_aminoglycoside_resistance_(non-RMT)`
+               ) %>%
+        column_to_rownames('name') %>%
+        mutate(across(everything(),
+                      ~if_else(.x >= 1, 1, 0))) %>%
+        mutate(count_AMR_genes = rowSums(.))
+        
+#Determine if strains have more than 2 classes of resistance genes present (i.e. MDR status)
+MDR_status <- MDR_table_small %>%
+        select(count_AMR_genes) %>% 
+        mutate(MDR_status = if_else(count_AMR_genes > 2, 1, 0)) %>%
+        rownames_to_column('name')
+
+
+
+```
+
+```{r}
+#Create our long format table, binding in CIA res and MDR/gene count data from above
+long_format_abritamr_processed <- abritamr %>% 
+            mutate(across(everything(),
+                          ~str_replace(.x,
+                                       "glpT_[^,]+,?",
+                                       ""))) %>%
+            mutate(across(everything(),
+                          ~str_replace(.x,
+                                       "uhpT_[^,]+,?",
+                                       ""))) %>%
+    #mutate(across(everything(),
+    #              ~str_replace(.x,
+    #                           "gyrA_[^,]+,?",
+    #                           ""))) %>%
+    #mutate(across(everything(),
+    #              ~str_replace(.x,
+    #                           "parC[^,]+,?",
+    #                           ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "ptsI_[^,]+,?",
+                                   ""))) %>%
+        mutate(across(everything(),
+                  ~str_replace(.x,
+                               "marR_[^,]+,?",
+                               ""))) %>%
+        mutate(across(everything(),
+                  ~str_replace(.x,
+                               "blaEC-[0-9]+\\*?,?",
+                               ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   "^,",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~str_replace(.x,
+                                   ",$",
+                                   ""))) %>%
+        mutate(across(everything(),
+                      ~na_if(.,"")
+                      )) %>%
+        pivot_longer(2:ncol(abritamr),
+                     names_to = "resistance",
+                     values_drop_na = TRUE) %>%
+        mutate(class_includes_CIA_res = str_detect(resistance,
+                                    'Quinolone|[^not_]ESBL|[^or_]Carbapenemase|Colistin|Macrolide|Lincosamide')) %>%
+        rename('genes' = value) %>%
+        mutate(resistance_genes_present = 1) %>%
+        select(name, resistance, class_includes_CIA_res, resistance_genes_present, genes) %>%
+        mutate(resistance = str_replace(resistance, 'ABRITAMR\\.', '')) %>%
+        inner_join(MDR_status, by = 'name') %>% 
+        inner_join(CIA_res, by = 'name') %>% 
+        group_by(name) %>% 
+        add_count() %>%
+        rename("Strain_MDR_status" = `MDR_status`, "Strain_CIA_status" = `CIA_res_status`, "Strain_count_of_AMR_gene_classes" = `count_AMR_genes`, "Strain_count_of_AMR_genes" = n)
+
+long_format_abritamr_processed <- full_join(long_format_abritamr_processed, sample_names) %>% mutate(Strain_MDR_status = replace_na(Strain_MDR_status,0)) %>% mutate(Strain_count_of_AMR_gene_classes = replace_na(Strain_count_of_AMR_gene_classes,0)) %>% mutate(Strain_CIA_status = replace_na(Strain_CIA_status,0)) %>% mutate(Strain_count_of_AMR_genes = replace_na(Strain_count_of_AMR_genes,0)) %>% mutate(genes = replace_na(genes, ''))
+
+genometa <- long_format_abritamr_processed %>% select(name, Strain_MDR_status, Strain_CIA_status, Strain_count_of_AMR_gene_classes, Strain_count_of_AMR_genes) %>% unique() %>% inner_join(genometa)
+
+#Write to file
+long_format_abritamr_processed%>% write_delim("delims/long_format_abritamr_5631.txt", delim = "\t")
+
+```
+
+```{r}
+Consensus_phylogroup <- genometa %>% group_by(ST_new, clermontyping..clermontyping_phylogroup) %>% tally() %>% 
+    arrange(n) %>% group_by(ST_new) %>% slice_max(n = 1, n, with_ties = FALSE) %>% select(-n) %>% rename(Consensus_phylogroup = clermontyping..clermontyping_phylogroup)
+
+genometa <- genometa %>% full_join(Consensus_phylogroup, by = "ST_new") %>% select(name, Consensus_phylogroup, everything())
+```
+
+```{r}
+Strain_VF_counts <- genometa %>% select(name, matches("vfdb")) %>%
+        column_to_rownames("name") %>%
+        mutate(Strain_VF_count = rowSums(.)) %>%
+        rownames_to_column("name") %>%
+        full_join(sample_names, by = "name") %>%
+        select(name, Strain_VF_count) %>%
+        mutate(across(everything(), ~ replace_na(.x, 0)))
+
+genometa <- genometa %>% full_join(Strain_VF_counts, by = "name") %>% select(name, Strain_VF_count, everything())
+```
+
+
+
+# Write to file
+```{r}
+
+write_delim(genometa, "delims/genometa_n5631.txt", delim = "\t")
+```

@@ -1,0 +1,105 @@
+
+SKA: Split Kmer Analysis
+Version: 1.0
+Citation: TBA
+
+Calculating pairwise distances for 87 files
+Clusters will be created for isolates that are within 100 SNPs of one another and share at least 95% of the split kmers of the isolate with fewer kmers
+Distances will be written to ST963_dists/ST963_dist_100_SNP.distances.tsv
+Clusters will be written to files with the prefix ST963_dists/ST963_dist_100_SNP
+
+Collecting number of samples 
+Found 87 samples in 87 files
+Reading ST963/AusGEM_00456.skf
+Reading ST963/AusGEM_00502.skf
+Reading ST963/AusGEM_00559.skf
+Reading ST963/AusGEM_00621.skf
+Reading ST963/AusGEM_00629.skf
+Reading ST963/AusGEM_00677.skf
+Reading ST963/AusGEM_00685.skf
+Reading ST963/AusGEM_00691.skf
+Reading ST963/AusGEM_00696.skf
+Reading ST963/AusGEM_00699.skf
+Reading ST963/AusGEM_01739.skf
+Reading ST963/AusGEM_01740.skf
+Reading ST963/AusGEM_01741.skf
+Reading ST963/AusGEM_01742.skf
+Reading ST963/AusGEM_01743.skf
+Reading ST963/AusGEM_01744.skf
+Reading ST963/AusGEM_01745.skf
+Reading ST963/AusGEM_01746.skf
+Reading ST963/AusGEM_01747.skf
+Reading ST963/AusGEM_01748.skf
+Reading ST963/AusGEM_01749.skf
+Reading ST963/AusGEM_01750.skf
+Reading ST963/AusGEM_01751.skf
+Reading ST963/AusGEM_01752.skf
+Reading ST963/AusGEM_01753.skf
+Reading ST963/AusGEM_01754.skf
+Reading ST963/AusGEM_01755.skf
+Reading ST963/AusGEM_01756.skf
+Reading ST963/AusGEM_01757.skf
+Reading ST963/AusGEM_01758.skf
+Reading ST963/AusGEM_01759.skf
+Reading ST963/AusGEM_01760.skf
+Reading ST963/AusGEM_01761.skf
+Reading ST963/AusGEM_01762.skf
+Reading ST963/AusGEM_01763.skf
+Reading ST963/AusGEM_01764.skf
+Reading ST963/AusGEM_01765.skf
+Reading ST963/AusGEM_01766.skf
+Reading ST963/AusGEM_01767.skf
+Reading ST963/AusGEM_01768.skf
+Reading ST963/AusGEM_01769.skf
+Reading ST963/AusGEM_01770.skf
+Reading ST963/AusGEM_01771.skf
+Reading ST963/AusGEM_01772.skf
+Reading ST963/AusGEM_01773.skf
+Reading ST963/AUSMDU00003540.skf
+Reading ST963/AUSMDU00004933.skf
+Reading ST963/AUSMDU00005018.skf
+Reading ST963/AUSMDU00007336.skf
+Reading ST963/AUSMDU00007431.skf
+Reading ST963/AUSMDU00007444.skf
+Reading ST963/AUSMDU00007450.skf
+Reading ST963/AUSMDU00008001.skf
+Reading ST963/AUSMDU00008259.skf
+Reading ST963/AUSMDU00008263.skf
+Reading ST963/AUSMDU00008408.skf
+Reading ST963/AUSMDU00008424.skf
+Reading ST963/AUSMDU00008435.skf
+Reading ST963/AUSMDU00008492.skf
+Reading ST963/AUSMDU00008578.skf
+Reading ST963/AUSMDU00008579.skf
+Reading ST963/AUSMDU00008632.skf
+Reading ST963/AUSMDU00014582.skf
+Reading ST963/AUSMDU00016015.skf
+Reading ST963/AUSMDU00018242.skf
+Reading ST963/AUSMDU00021229.skf
+Reading ST963/AUSMDU00048767.skf
+Reading ST963/AUSMDU00048962.skf
+Reading ST963/AUSMDU00062348.skf
+Reading ST963/ERR5355778.skf
+Reading ST963/ERR5355920.skf
+Reading ST963/SRR11094190.skf
+Reading ST963/SRR11341637.skf
+Reading ST963/SRR5936474.skf
+Reading ST963/SRR5936475.skf
+Reading ST963/SRR6455977.skf
+Reading ST963/SRR6455986.skf
+Reading ST963/SRR6456020.skf
+Reading ST963/SRR6456021.skf
+Reading ST963/SRR6456039.skf
+Reading ST963/SRR6456040.skf
+Reading ST963/SRR6456044.skf
+Reading ST963/SRR7724590.skf
+Reading ST963/SRR7724605.skf
+Reading ST963/SRR7724806.skf
+Reading ST963/SRR7828667.skf
+Reading ST963/SRR7828800.skf
+8394151 kmers read from 87 samples in 87 files
+Calculating SNP distances
+Printing clusters to ST963_dists/ST963_dist_100_SNP.clusters.tsv
+Printing distances to ST963_dists/ST963_dist_100_SNP.distances.tsv
+Done
+Total time required: 332.094s

@@ -1,0 +1,15 @@
+graph {
+	AusGEM_00575 -- AusGEM_00577 [label="1" weight=3.97] ;
+	AusGEM_00575 -- AusGEM_00592 [label="3" weight=3.91] ;
+	AusGEM_00577 -- AusGEM_00592 [label="4" weight=3.88] ;
+	AusGEM_01711 -- AusGEM_01712 [label="7" weight=3.79] ;
+	AusGEM_01981 -- AusGEM_01982 [label="16" weight=3.52] ;
+	AusGEM_02031 -- AusGEM_02032 [label="10" weight=3.7] ;
+	AUSMDU00009504 -- AUSMDU00036798 [label="55" weight=2.35] ;
+	AUSMDU00010606 -- AUSMDU00019339 [label="45" weight=2.65] ;
+	AUSMDU00011818 -- AUSMDU00012378 [label="19" weight=3.43] ;
+	AUSMDU00017148 -- AUSMDU00017250 [label="44" weight=2.68] ;
+	ERR4254600 -- SRR4241831 [label="26" weight=3.22] ;
+	SRR4241835 -- TEA_12_GNB_311 [label="24" weight=3.28] ;
+	SRR4241839 -- TEA_GNB_2809 [label="65" weight=2.05] ;
+}

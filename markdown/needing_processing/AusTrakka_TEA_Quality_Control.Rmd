@@ -1,0 +1,263 @@
+---
+title: "AusTrakka TEA Quality Control"
+author: "Max Cummins"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#Read in our packages
+library(tidyverse)
+library(ggplot2)
+library(xml2)
+
+#Define our not in function
+`%nin%` <- Negate(`%in%`)
+```
+
+# Quality control AusTrakka Genomes
+
+Here we perform quality control analysis on the cohort.
+
+Our quality control metrics are as follows:
+
+```{r set_QC_params, echo=FALSE}
+### QC Metrics
+
+##Assembly stats
+        #Max number of scaffolds
+QC_max_scaff <- 800
+        #Minimum N50
+QC_min_N50 <- 15000
+
+#QC MLST metrics
+        #Intended MLST scheme as per mlst (https://github.com/tseemann/mlst)
+        #One of the following (column 1):
+                #https://github.com/tseemann/mlst/blob/master/db/scheme_species_map.tab
+QC_ST_scheme <- "ecoli"
+
+#Bracken metrics
+        #Expected species ID as per Bracken. Latin name should work
+QC_expected_species <- "Escherichia coli"
+
+#CheckM metrics
+        #Minimum required 'Completion' metric
+QC_min_complete <- 95
+        #Maximum 'Contamination' metric
+QC_max_contamination <- 5
+
+#QC working directory
+QC_report_path <- "analysis/QC_report.txt"
+
+#MLST path
+mlst_path <- "analysis/mlst.txt"
+```
+
+## Download our expected genome sizes
+
+Next we need to determine our expected genome size for our samples. For that we query NCBI to determine the min and max genome size in the database.
+
+Below is based on *E. coli*, but you can change the taxid to that of another species and it will still work.
+
+```{r download_expected_genome_size, echo=TRUE}
+#Download an XML file containing expected genome size for E. coli
+#Change the taxid value for genome sizes for a different species
+if(!file.exists("delims/expected_genome_size.xml")){
+        download.file("https://api.ncbi.nlm.nih.gov/genome/v0/expected_genome_size/expected_genome_size?species_taxid=562&length=1", 'delims/expected_genome_size.xml')
+        }
+
+#Read in our XML file
+expected_genome_sizes <- read_xml(x = "delims/expected_genome_size.xml")
+
+#Pull out the minimum genome size and allow a buffer of 5%
+#i.e. we allow anything within 5% of the smallest genome for E. coli in NCBI DBs
+min_genome_size <- xml_text(xml_find_first(expected_genome_sizes, 'minimum_ungapped_length')) %>% as.numeric() * 0.95
+
+#Pull out the minimum genome size and allow a buffer of 5%
+#i.e. we allow anything within 5% of the largest genome for E. coli in NCBI DBs
+max_genome_size <- xml_text(xml_find_first(expected_genome_sizes, 'maximum_ungapped_length')) %>% as.numeric() * 1.05
+```
+
+## Create temporary composite QC report
+
+Until we have a proper QC file with everything included we first need to make a composite QC file from the ones we have for the TEA genomes and the original AusTrakka cohort
+
+```{r create_temporary_QC_file, eval=FALSE, include=FALSE}
+
+#Read in our TEA genome QC report
+QC_report_TEA <- read_delim(QC_report_path, 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Read in our original genome QC report
+QC_report_original <- read_delim("analysis/QC_report.txt", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Bind our tables
+QC_report <- bind_rows(QC_report_TEA, QC_report_original)
+
+#Read in our TEA genome MLST file
+mlst_TEA <- read_delim(mlst_path, 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Read in original genome MLST file
+mlst_original <- read_delim("analysis/mlst.txt", 
+    delim = "\t", escape_double = FALSE, 
+    trim_ws = TRUE,
+    show_col_types = FALSE)
+
+#Bind our tables
+mlst <- bind_rows(mlst_TEA, mlst_original)
+
+```
+
+## Quality control filtering
+
+Now we filter our genomes based on the metrics we provided above.
+
+```{r simple_QC, echo=FALSE, include=FALSE}
+
+#Read in QC report if it doesnt already exist in memory
+if(!exists("QC_report")){
+        QC_report <- read_delim(QC_report_path, 
+                                delim = "\t", escape_double = FALSE, 
+                                trim_ws = TRUE,
+                                show_col_types = FALSE)
+}
+
+##Duplicate rows for the same samples
+#Samples w multiple best matches occurring in the table twice
+#Group by sample name and collapse tied best matches for kraken
+#Remove duplicate rows
+QC_report <- QC_report %>% group_by(name) %>% mutate(BRACKEN.species_second_best_match = toString(BRACKEN.species_second_best_match)) %>% unique()
+
+#Read in MLST data
+if(!exists("mlst")){
+        mlst <- read_delim(mlst_path, 
+                           delim = "\t", escape_double = FALSE, 
+                           trim_ws = TRUE,
+                           show_col_types = FALSE)
+}
+
+#Add a prefix for the MLST column
+mlst <- mlst %>% rename_with(~gsub("^", "MLST.", .x)) %>% rename("name" = "MLST.name")
+
+#Join our MLST and QC data
+QC_report_w_mlst <- inner_join(QC_report, mlst, by = "name")
+
+#Create a list of which genomes failed why
+QC_report_pass_or_fail <- QC_report_w_mlst %>%
+        group_by("Expected_species_ID" = BRACKEN.species_best_match == QC_expected_species,
+                 "Expected_MLST_alleles" = MLST.scheme == QC_ST_scheme,
+                 "Sufficient_completeness" = CHECKM.Completeness >= QC_min_complete,
+                 "Sufficient_purity" = CHECKM.Contamination <= QC_max_contamination,
+                 "Sufficient_scaffold_number" = ASSEMBLY_STATS.number <= QC_max_scaff,
+                 "Sufficient_N50" = ASSEMBLY_STATS.N50 >= QC_min_N50,
+                 "Within_expected_genome_size_range" = ASSEMBLY_STATS.total_length >= min_genome_size & ASSEMBLY_STATS.total_length <= max_genome_size)
+
+#Create a list of QC passing genomes
+QC_pass <- QC_report_pass_or_fail %>%
+        filter(Expected_species_ID == TRUE,
+               Expected_MLST_alleles == TRUE,
+               Sufficient_completeness == TRUE,
+               Sufficient_purity == TRUE,
+               Sufficient_scaffold_number == TRUE,
+               Sufficient_N50 == TRUE,
+               Within_expected_genome_size_range == TRUE)
+                     
+#Create a list of QC failing genomes
+QC_fail <- QC_report_pass_or_fail %>% filter(name %nin% QC_pass$name)
+
+#Create a list of QC passing genomes
+QC_pass_names <- QC_pass %>% as.data.frame() %>% select(name)
+```
+
+```{r, write_files}
+#Check if our folder exists before continuing
+if(!dir.exists("delims")){
+        dir.create("delims")
+}
+
+#Check if our file exists before continuing
+if(!file.exists("delims/QC_pass_names.txt")){
+        
+        #Save our list of QC_names
+        write_delim(QC_pass_names, file = "delims/QC_pass_names.txt")
+}
+
+#Check if our file exists before continuing
+if(!file.exists("delims/QC_data_QC_passes.csv")){
+        #Save following files to computer
+        write.csv(QC_pass,"delims/QC_data_QC_passes.csv", row.names = TRUE)
+}
+
+#Check if our file exists before continuing
+if(!file.exists("delims/QC_data_QC_fails.csv")){
+        #Save our QC data of genomes which failed QC to file
+        write.csv(QC_fail,"delims/QC_data_QC_fails.csv", row.names = TRUE)
+}
+
+#Check if our file exists before continuing
+if(!file.exists("delims/QC_report_pass_or_fail.csv")){
+        #Save our report of QC passes or fails to file
+        write.csv(QC_report_pass_or_fail,"delims/QC_report_pass_or_fail.csv", row.names = TRUE)
+}
+```
+
+## Results
+
+
+
+## Failed genomes
+
+Below is a visualisation of the genomes which failed to meet our QC cut-offs.
+
+```{r plot_failed_summary, echo=FALSE, fig.align="center", fig.width=12, fig.height=8}
+
+library(ComplexUpset)
+
+#Pull out the intersections we want to plot based on
+reason_for_QC_fail <- QC_fail %>% select(21:27) %>% colnames()
+
+#Generate out plot of genomes which failed QC
+upset(QC_fail,
+      reason_for_QC_fail,
+      name = 'Reason for QC Failure',
+      keep_empty_groups = TRUE,
+      annotations = list(
+        'Top Species (Bracken)'=(
+            ggplot(mapping=aes(fill=BRACKEN.species_best_match))
+            + geom_bar(stat='count', position='fill')
+            + scale_y_continuous(labels=scales::percent_format())
+            + ylab('Species')),
+        'Top Species (MLST)'=(
+            ggplot(mapping=aes(fill=MLST.scheme))
+            + geom_bar(stat='count', position='fill')
+            + scale_y_continuous(labels=scales::percent_format())
+            + ylab('Species')),
+        'Assembly Stats' =(
+                 ggplot(mapping=aes(y=ASSEMBLY_STATS.total_length/1000000))
+                + geom_point(na.rm=TRUE)
+                + geom_violin(alpha=0.5, na.rm=TRUE)
+                + geom_hline(yintercept=min_genome_size/1000000,
+                             color = "#bebeda",
+                             linetype = "dashed")
+                + geom_hline(yintercept=max_genome_size/1000000,
+                             color = "#bebeda",
+                             linetype = "dashed")
+                + ylab('Genome Size (Mbp)')     
+            )
+        )
+    )
+```

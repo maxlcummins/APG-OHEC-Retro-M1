@@ -1,0 +1,47 @@
+
+SKA: Split Kmer Analysis
+Version: 1.0
+Citation: TBA
+
+Calculating pairwise distances for 29 files
+Clusters will be created for isolates that are within 100 SNPs of one another and share at least 95% of the split kmers of the isolate with fewer kmers
+Distances will be written to ST80_dists/ST80_dist_100_SNP.distances.tsv
+Clusters will be written to files with the prefix ST80_dists/ST80_dist_100_SNP
+
+Collecting number of samples 
+Found 29 samples in 29 files
+Reading ST80/AusGEM_00349.skf
+Reading ST80/AusGEM_00389.skf
+Reading ST80/AusGEM_00426.skf
+Reading ST80/AusGEM_00427.skf
+Reading ST80/AusGEM_00428.skf
+Reading ST80/AusGEM_00441.skf
+Reading ST80/AusGEM_00445.skf
+Reading ST80/AusGEM_00446.skf
+Reading ST80/AusGEM_00466.skf
+Reading ST80/AusGEM_00473.skf
+Reading ST80/AusGEM_00476.skf
+Reading ST80/AusGEM_00479.skf
+Reading ST80/AusGEM_00596.skf
+Reading ST80/AusGEM_00602.skf
+Reading ST80/AusGEM_00667.skf
+Reading ST80/AusGEM_00670.skf
+Reading ST80/AusGEM_01112.skf
+Reading ST80/AusGEM_01113.skf
+Reading ST80/AusGEM_01175.skf
+Reading ST80/AusGEM_01186.skf
+Reading ST80/AusGEM_01350.skf
+Reading ST80/AusGEM_01351.skf
+Reading ST80/AusGEM_01352.skf
+Reading ST80/AusGEM_01986.skf
+Reading ST80/AUSMDU00024951.skf
+Reading ST80/SRR6456032.skf
+Reading ST80/TEA_60_1_Ti1.skf
+Reading ST80/TEA_63_2_TC7.skf
+Reading ST80/TEA_TA265.skf
+7446800 kmers read from 29 samples in 29 files
+Calculating SNP distances
+Printing clusters to ST80_dists/ST80_dist_100_SNP.clusters.tsv
+Printing distances to ST80_dists/ST80_dist_100_SNP.distances.tsv
+Done
+Total time required: 130.577s

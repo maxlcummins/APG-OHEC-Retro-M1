@@ -1,0 +1,151 @@
+
+SKA: Split Kmer Analysis
+Version: 1.0
+Citation: TBA
+
+Calculating pairwise distances for 133 files
+Clusters will be created for isolates that are within 100 SNPs of one another and share at least 95% of the split kmers of the isolate with fewer kmers
+Distances will be written to ST117_dists/ST117_dist_100_SNP.distances.tsv
+Clusters will be written to files with the prefix ST117_dists/ST117_dist_100_SNP
+
+Collecting number of samples 
+Found 133 samples in 133 files
+Reading ST117/AusGEM_00017.skf
+Reading ST117/AusGEM_00019.skf
+Reading ST117/AusGEM_00020.skf
+Reading ST117/AusGEM_00022.skf
+Reading ST117/AusGEM_00024.skf
+Reading ST117/AusGEM_00036.skf
+Reading ST117/AusGEM_00040.skf
+Reading ST117/AusGEM_00060.skf
+Reading ST117/AusGEM_00065.skf
+Reading ST117/AusGEM_00067.skf
+Reading ST117/AusGEM_00068.skf
+Reading ST117/AusGEM_00074.skf
+Reading ST117/AusGEM_00085.skf
+Reading ST117/AusGEM_00086.skf
+Reading ST117/AusGEM_00094.skf
+Reading ST117/AusGEM_00095.skf
+Reading ST117/AusGEM_00096.skf
+Reading ST117/AusGEM_00101.skf
+Reading ST117/AusGEM_00104.skf
+Reading ST117/AusGEM_00105.skf
+Reading ST117/AusGEM_00106.skf
+Reading ST117/AusGEM_00107.skf
+Reading ST117/AusGEM_00113.skf
+Reading ST117/AusGEM_00114.skf
+Reading ST117/AusGEM_00116.skf
+Reading ST117/AusGEM_00120.skf
+Reading ST117/AusGEM_00130.skf
+Reading ST117/AusGEM_00139.skf
+Reading ST117/AusGEM_00140.skf
+Reading ST117/AusGEM_00141.skf
+Reading ST117/AusGEM_00142.skf
+Reading ST117/AusGEM_00180.skf
+Reading ST117/AusGEM_00181.skf
+Reading ST117/AusGEM_00183.skf
+Reading ST117/AusGEM_00184.skf
+Reading ST117/AusGEM_00185.skf
+Reading ST117/AusGEM_00186.skf
+Reading ST117/AusGEM_00187.skf
+Reading ST117/AusGEM_00188.skf
+Reading ST117/AusGEM_00190.skf
+Reading ST117/AusGEM_00191.skf
+Reading ST117/AusGEM_00192.skf
+Reading ST117/AusGEM_00193.skf
+Reading ST117/AusGEM_00202.skf
+Reading ST117/AusGEM_00203.skf
+Reading ST117/AusGEM_00205.skf
+Reading ST117/AusGEM_00209.skf
+Reading ST117/AusGEM_00210.skf
+Reading ST117/AusGEM_00212.skf
+Reading ST117/AusGEM_00213.skf
+Reading ST117/AusGEM_00214.skf
+Reading ST117/AusGEM_00215.skf
+Reading ST117/AusGEM_00216.skf
+Reading ST117/AusGEM_00217.skf
+Reading ST117/AusGEM_00218.skf
+Reading ST117/AusGEM_00221.skf
+Reading ST117/AusGEM_00223.skf
+Reading ST117/AusGEM_00224.skf
+Reading ST117/AusGEM_00225.skf
+Reading ST117/AusGEM_00228.skf
+Reading ST117/AusGEM_00229.skf
+Reading ST117/AusGEM_00230.skf
+Reading ST117/AusGEM_00231.skf
+Reading ST117/AusGEM_00232.skf
+Reading ST117/AusGEM_00233.skf
+Reading ST117/AusGEM_00238.skf
+Reading ST117/AusGEM_00239.skf
+Reading ST117/AusGEM_00240.skf
+Reading ST117/AusGEM_00245.skf
+Reading ST117/AusGEM_00253.skf
+Reading ST117/AusGEM_00254.skf
+Reading ST117/AusGEM_00255.skf
+Reading ST117/AusGEM_00256.skf
+Reading ST117/AusGEM_00257.skf
+Reading ST117/AusGEM_00282.skf
+Reading ST117/AusGEM_00286.skf
+Reading ST117/AusGEM_00287.skf
+Reading ST117/AusGEM_00288.skf
+Reading ST117/AusGEM_00289.skf
+Reading ST117/AusGEM_00293.skf
+Reading ST117/AusGEM_00302.skf
+Reading ST117/AusGEM_00303.skf
+Reading ST117/AusGEM_00305.skf
+Reading ST117/AusGEM_00306.skf
+Reading ST117/AusGEM_00307.skf
+Reading ST117/AusGEM_00315.skf
+Reading ST117/AusGEM_00323.skf
+Reading ST117/AusGEM_00326.skf
+Reading ST117/AusGEM_00393.skf
+Reading ST117/AusGEM_00401.skf
+Reading ST117/AusGEM_00411.skf
+Reading ST117/AusGEM_00452.skf
+Reading ST117/AusGEM_00614.skf
+Reading ST117/AusGEM_00786.skf
+Reading ST117/AusGEM_00908.skf
+Reading ST117/AusGEM_00929.skf
+Reading ST117/AusGEM_01406.skf
+Reading ST117/AusGEM_01885.skf
+Reading ST117/AusGEM_01903.skf
+Reading ST117/AUSMDU00008374.skf
+Reading ST117/AUSMDU00023223.skf
+Reading ST117/AUSMDU00035564.skf
+Reading ST117/SRR10065349.skf
+Reading ST117/SRR10065351.skf
+Reading ST117/SRR10065352.skf
+Reading ST117/SRR14160928.skf
+Reading ST117/SRR7469843.skf
+Reading ST117/SRR7828747.skf
+Reading ST117/TEA_2H_103_1.skf
+Reading ST117/TEA_2H_290_1.skf
+Reading ST117/TEA_2H_434_21.skf
+Reading ST117/TEA_B1075.skf
+Reading ST117/TEA_B1932b.skf
+Reading ST117/TEA_C1_119.skf
+Reading ST117/TEA_C1_123.skf
+Reading ST117/TEA_C2_100.skf
+Reading ST117/TEA_C2_102.skf
+Reading ST117/TEA_C2_103.skf
+Reading ST117/TEA_C2_106.skf
+Reading ST117/TEA_C2_13.skf
+Reading ST117/TEA_C2_27.skf
+Reading ST117/TEA_C2_97.skf
+Reading ST117/TEA_C3_65.skf
+Reading ST117/TEA_C3_70.skf
+Reading ST117/TEA_C3_72.skf
+Reading ST117/TEA_C4_85.skf
+Reading ST117/TEA_C4_86.skf
+Reading ST117/TEA_C4_93.skf
+Reading ST117/TEA_C4_94.skf
+Reading ST117/TEA_C4_95.skf
+Reading ST117/TEA_E5261.skf
+Reading ST117/TEA_H030.skf
+Reading ST117/TEA_H561.skf
+11842864 kmers read from 133 samples in 133 files
+Calculating SNP distances
+Printing clusters to ST117_dists/ST117_dist_100_SNP.clusters.tsv
+Printing distances to ST117_dists/ST117_dist_100_SNP.distances.tsv
+Done
+Total time required: 411.849s
