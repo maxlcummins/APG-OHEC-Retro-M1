@@ -271,26 +271,28 @@ ggsave(filename = "../Figures/SNPs_vs_cgMLST_facet_same_source_col_by_ST.pdf", p
 
 library(eulerr)
 
-intersource_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 20) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+set.seed(5) 
+
+intersource_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 20) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_20 <- intersource_less_20 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
-intersource_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 50) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+intersource_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 50) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_50 <- intersource_less_50 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-intersource_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 75) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+intersource_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 75) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_75 <- intersource_less_75 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
-intersource_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+intersource_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_100 <- intersource_less_100 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
@@ -298,7 +300,7 @@ intersource_less_100 <- intersource_less_100 %>% mutate(col1 = pmin(`Sample 1`, 
 
 
 
-intersource_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 200) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+intersource_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 200) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_200 <- intersource_less_200 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
@@ -306,23 +308,32 @@ intersource_less_200 <- intersource_less_200 %>% mutate(col1 = pmin(`Sample 1`, 
 
 
 
-intersource_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 500) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+intersource_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 500) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
 intersource_less_500 <- intersource_less_500 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
-sets <- list('≤ 20' = intersource_less_20$name_combo,
-             '≤ 50' = intersource_less_50$name_combo,
-             '≤ 75' = intersource_less_75$name_combo,
-             '≤ 100' = intersource_less_100$name_combo,
-             '≤ 200' = intersource_less_200$name_combo,
-             '≤ 500' = intersource_less_500$name_combo)
+sets <- list('20' = intersource_less_20$name_combo,
+             '50' = intersource_less_50$name_combo,
+             '75' = intersource_less_75$name_combo,
+             '100' = intersource_less_100$name_combo,
+             '200' = intersource_less_200$name_combo,
+             '500' = intersource_less_500$name_combo)
 
 # Generate and plot the Euler diagram
 fit <- euler(sets)
 plot(fit,
-     quantities = TRUE)
+     quantities = TRUE,
+     lty = c(1, 1, 1, 1, 2, 2),
+     fills = rev(
+       c("#A9A9A9",
+         "#E8E8E8",
+         "#FF6A6A",
+         "#FFA500",
+         "#FFFF00",
+         "#FFFFF0")))
+
 ```
 
 ## Euler Diagram
@@ -331,41 +342,41 @@ plot(fit,
 #Install eulerr if not already present
 #install.packages("eulerr")
 
-library(eulerr)
+set.seed(5)
 
-intrasource_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 20) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 20) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_20 <- intrasource_less_20 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
-intrasource_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 50) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 50) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_50 <- intrasource_less_50 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-intrasource_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 75) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 75) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_75 <- intrasource_less_75 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
-intrasource_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_100 <- intrasource_less_100 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-intrasource_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 200) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 200) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_200 <- intrasource_less_200 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-intrasource_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 500) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
+intrasource_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 500) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x == Revised_Source_Niche.y)
 
 intrasource_less_500 <- intrasource_less_500 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
@@ -381,7 +392,15 @@ sets_2 <- list('≤ 20' = intrasource_less_20$name_combo,
 # Generate and plot the Euler diagram
 fit_2 <- euler(sets_2)
 plot(fit_2,
-     quantities = TRUE)
+     quantities = TRUE,
+     lty = c(1, 1, 1, 1, 2, 2),
+     fills = rev(
+       c("#A9A9A9",
+         "#E8E8E8",
+         "#FF6A6A",
+         "#FFA500",
+         "#FFFF00",
+         "#FFFFF0")))
 ```
 
 ## Euler Diagram
@@ -390,41 +409,41 @@ plot(fit_2,
 #Install eulerr if not already present
 #install.packages("eulerr")
 
-library(eulerr)
+set.seed(5)
 
-total_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 20) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_20 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 20) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_20 <- total_less_20 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
-total_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 50) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_50 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 50) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_50 <- total_less_50 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-total_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 75) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_75 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 75) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_75 <- total_less_75 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
-total_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 100) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_100 <- total_less_100 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-total_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 200) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_200 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 200) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_200 <- total_less_200 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
 
 
 
-total_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 500) %>% filter(`Sample 1` != `Sample 2`) 
+total_less_500 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 500) %>% filter(`Sample 1` != `Sample 2`) 
 
 total_less_500 <- total_less_500 %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
 
@@ -440,5 +459,125 @@ sets_3 <- list('≤ 20' = total_less_20$name_combo,
 # Generate and plot the Euler diagram
 fit_3 <- euler(sets_3)
 plot(fit_3,
-     quantities = TRUE)
+     quantities = TRUE,
+     lty = c(1, 1, 1, 1, 2, 2),
+     fills = rev(
+       c("#A9A9A9",
+         "#E8E8E8",
+         "#FF6A6A",
+         "#FFA500",
+         "#FFFF00",
+         "#FFFFF0")))
+```
+
+
+## Euler Diagram
+
+```{r}
+#Install eulerr if not already present
+#install.packages("eulerr")
+
+set.seed(5)
+
+total_less_100_SNPs <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>% filter(`Sample 1` != `Sample 2`) 
+
+total_less_100_SNPs <- total_less_100_SNPs %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+total_less_40_alleles <- df_all_ST_filtered_SNPs_all %>% filter(value <= 40) %>% filter(`Sample 1` != `Sample 2`) 
+
+total_less_40_alleles <- total_less_40_alleles %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+sets_4 <- list('≤ 40 Alleles' = total_less_40_alleles$name_combo,
+             '≤ 100 SNPs' = total_less_100_SNPs$name_combo)
+
+# Generate and plot the Euler diagram
+fit_4 <- euler(sets_4)
+plot(fit_4,
+     quantities = TRUE,
+     #lty = c(1, 1, 1, 1, 2, 2),
+     fills = rev(
+       c("#A9A9A9",
+#         "#E8E8E8",
+#         "#FF6A6A",
+#         "#FFA500",
+#         "#FFFF00",
+         "#FFFFF0")))
+```
+
+```{r}
+#Install eulerr if not already present
+#install.packages("eulerr")
+
+library(eulerr)
+
+set.seed(5) 
+
+intersource_less_5_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 5) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_5_cgMLST <- intersource_less_5_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+intersource_less_10_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 10) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_10_cgMLST <- intersource_less_10_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+intersource_less_20_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 20) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_20_cgMLST <- intersource_less_20_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+intersource_less_40_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 40) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_40_cgMLST <- intersource_less_40_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+
+intersource_less_60_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 60) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_60_cgMLST <- intersource_less_60_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+intersource_less_80_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 80) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_80_cgMLST <- intersource_less_80_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+
+intersource_less_100_cgMLST <- df_all_ST_filtered_SNPs_all %>% filter(value <= 100) %>% filter(`Sample 1` != `Sample 2`) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+intersource_less_100_cgMLST <- intersource_less_100_cgMLST %>% mutate(col1 = pmin(`Sample 1`, `Sample 2`), col2 = pmax(`Sample 1`, `Sample 2`)) %>% ungroup() %>% mutate(name_combo = paste0(col1, "/",col2)) %>% select(-col1, -col2)
+
+
+
+
+
+sets <- list('5' = intersource_less_5_cgMLST$name_combo,
+             '20' = intersource_less_20_cgMLST$name_combo,
+             '40' = intersource_less_40_cgMLST$name_combo,
+             '60' = intersource_less_60_cgMLST$name_combo,
+             '80' = intersource_less_80_cgMLST$name_combo,
+             '100' = intersource_less_100_cgMLST$name_combo)
+
+# Generate and plot the Euler diagram
+fit <- euler(sets)
+plot(fit,
+     quantities = TRUE,
+     lty = c(1, 1, 1, 1, 2, 2),
+     fills = rev(
+       c("#A9A9A9",
+         "#E8E8E8",
+         "#FF6A6A",
+         "#FFA500",
+         "#FFFF00",
+         "#FFFFF0")))
+
 ```
