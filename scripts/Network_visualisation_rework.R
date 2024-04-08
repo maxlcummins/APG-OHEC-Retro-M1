@@ -65,7 +65,7 @@ genometa <- vroom("../delims/genometa_n5631.txt", show_col_types = FALSE)
 
 for(sequence_type in unique(distances2$ST)){
 
-  
+  set.seed(1)
   dists <- distances2 %>%
     filter(ST == sequence_type) %>%
     filter(SNPs <= 100) %>%
@@ -77,14 +77,14 @@ for(sequence_type in unique(distances2$ST)){
   #Set a colour for each source
   sources <- sources %>%
     mutate(color = case_when(
-      Revised_Source_Niche == "Captive Animal" ~ "#b5467390",
-      Revised_Source_Niche == "Companion Animal" ~ "#59398d90",
-      Revised_Source_Niche == "Environmental" ~ "#709b4690",
-      Revised_Source_Niche == "Food" ~ "#c09f3d90",
-      Revised_Source_Niche == "Human" ~ "#48c59590",
-      Revised_Source_Niche == "Livestock" ~ "#c26bbc90",
-      Revised_Source_Niche == "Waste" ~ "#6d83da90",
-      Revised_Source_Niche == "Wild Animal" ~ "#b9553d90"
+      Revised_Source_Niche == "Captive Animal" ~ "#b5467395",
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Waste" ~ "#6d83da95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
     ))
   
   # Convert data frame to edge list for igraph
@@ -97,15 +97,21 @@ for(sequence_type in unique(distances2$ST)){
   vertex_color_vector <- sources$color[match(g_vertex_names, sources$name)]
   
   # Plot the graph
-  pdf(file = paste0("../figures/Network_graphs/Network_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  pdf(file = paste0("../figures/Network_graphs/Network_",
+                    sequence_type,
+                    ".pdf"),
+      width = 11.69,
+      height = 8.27)
   
   E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3,
                            ifelse(E(g)$SNPs <= 50, 2, 1))
   
   
+  set.seed(1)
+  
   plot(g, edge.width = E(g)$thickness,
        rescale = TRUE,
-       main = paste("Bacterial Genomic Distances - ", sequence_type),
+       main = sequence_type,
        vertex.size = 3,
        vertex.label = NA,
        vertex.color = vertex_color_vector,
@@ -121,14 +127,14 @@ for(sequence_type in unique(distances2$ST)){
              "Waste", 
              "Wild Animal"),
          fill = c(
-           "#b5467390",
-           "#59398d90",
-           "#709b4690",
-           "#c09f3d90",
-           "#48c59590",
-           "#c26bbc90",
-           "#6d83da90",
-           "#b9553d90"),
+           "#b5467395",
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#6d83da95",
+           "#b9553d95"),
          pch=19,
          bty = "n",
          pt.cex = 1,
@@ -137,6 +143,32 @@ for(sequence_type in unique(distances2$ST)){
          horiz = FALSE)
   
   dev.off()
+  
+  
+  
+  # Plot the graph
+  pdf(file = paste0("../figures/Network_graphs/Communities_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  
+  
+  clusters <- cluster_walktrap(g)
+  
+  plot(clusters, g, edge.width = E(g)$thickness,
+       rescale = TRUE,
+       main = sequence_type,
+       vertex.size = 3,
+       vertex.label = NA
+  )
+  dev.off()
 }
 clusters <- cluster_walktrap(g)
-plot(clusters, g)
+
+plot(clusters, g, edge.width = E(g)$thickness,
+     rescale = TRUE,
+     main = sequence_type,
+     vertex.size = 3,
+     vertex.label = NA,
+     mark.groups = T
+)
+
+
+
