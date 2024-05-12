@@ -1,7 +1,7 @@
 #install.packages("igraph")
 library(igraph)
 
-#setwd(dir = "APG-OHEC-Retro-M1/markdown/")
+setwd(dir = "APG-OHEC-Retro-M1/markdown/")
 
 distances <- read_delim(file = "../analysis/SKA/ST95_dists/ST95_dist_100_SNP.distances.tsv", delim = "\t")
 
