@@ -17,6 +17,9 @@ library(tidyverse)
 library(ggplot2)
 library(xml2)
 
+
+knitr::opts_chunk$set(echo = TRUE, root.dir = here::here())
+
 #Define our not in function
 `%nin%` <- Negate(`%in%`)
 ```
@@ -28,21 +31,30 @@ Here we perform genomic analysis on our AusTrakka genomes.
 ## Define our file paths
 
 ```{r}
+#Read in our tree
+tree <- ggtree::read.tree("APG-OHEC-Retro-M1/analysis/RapidNJ_5471.nwk")
+
+#Remove quotes from sample names
+tree$tip.label <- gsub("'", '', tree$tip.label)
+tree$tip.label <- gsub("\\.fa", "", tree$tip.label)
+
+#Create a list of samples in our cohort
+sample_names <- tree$tip.label %>% as.data.frame() %>% rename('name' = '.')
 
 ### TEA genome data
-TEA_abritamr_path <- "analysis/abritamr_resistance.txt"
+TEA_abritamr_path <- "APG-OHEC-Retro-M1/analysis/abritamr_resistance.txt"
 
-TEA_mlst_path <- "analysis/mlst.txt"
+TEA_mlst_path <- "APG-OHEC-Retro-M1/analysis/mlst.txt"
 
-TEA_clermontyping_path <- "analysis/clermontyping.txt"
+TEA_clermontyping_path <- "APG-OHEC-Retro-M1/analysis/clermontyping.txt"
 
-TEA_ectyper_path <- "analysis/ectyper.txt"
+TEA_ectyper_path <- "APG-OHEC-Retro-M1/analysis/ectyper.txt"
 
-TEA_fimtyper_path <- "analysis/fimtyper.txt"
+TEA_fimtyper_path <- "APG-OHEC-Retro-M1/analysis/fimtyper.txt"
 
-TEA_IncF_RST_path <- "analysis/IncF_RST.txt"
+TEA_IncF_RST_path <- "APG-OHEC-Retro-M1/analysis/IncF_RST.txt"
 
-genotype_path_TEA <- "analysis/genotype.txt"
+genotype_path_TEA <- "APG-OHEC-Retro-M1/analysis/genotype.txt"
 ```
 
 
@@ -87,6 +99,10 @@ for(i in ls(pattern = "TEA_")){
 ```
 
 ```{r message=TRUE, warning=TRUE}
+if(!file.exists(genotype_path_TEA)){
+  unzip(exdir = "APG-OHEC-Retro-M1/analysis", zipfile = "APG-OHEC-Retro-M1/analysis/genotype.txt.zip", overwrite = FALSE)
+}
+
 #Read in abricate data for tea dataset
 abricateR::abricateR(abricate_in = genotype_path_TEA, output = "TEA_abricate", writecsv = FALSE)
 
@@ -115,19 +131,19 @@ to include in our analysis.
 
 ```{r file_paths, echo=FALSE}
 #Read in QC data
-QC_pass_names <- read_csv("delims/QC_pass_names.txt", show_col_types = FALSE)
+QC_pass_names <- read_csv("APG-OHEC-Retro-M1/delims/QC_pass_names.txt", show_col_types = FALSE)
 
 #Remove samples which failed QC
 geno <- geno %>% filter(name %in% QC_pass_names$name)
 
 #Read in the names of the quarantined samples
-WW_quarantine <- read_csv("delims/purgelist.txt", col_names = 'name', show_col_types = FALSE)
+WW_quarantine <- read_csv("APG-OHEC-Retro-M1/delims/purgelist.txt", col_names = 'name', show_col_types = FALSE)
 
 #Remove WW samples
 geno <- geno %>% filter(name %nin% WW_quarantine$name)
 
 #Generate list of potential gull quarantined samples (2019 cohort unpublished)
-Gull_quarantine <- read_csv("delims/purgelist2.txt", col_names = 'name', show_col_types = FALSE)
+Gull_quarantine <- read_csv("APG-OHEC-Retro-M1/delims/purgelist2.txt", col_names = 'name', show_col_types = FALSE)
 
 #Remove gull samples
 geno <- geno %>% filter(name %nin% Gull_quarantine$name)
@@ -140,7 +156,7 @@ rm(list= ls()[!(ls() %in% c("geno", "%nin%"))])
 
 ```{r file_paths, echo=FALSE}
 #Read in QC data
-metadata <- read_delim("delims/metadata.csv", 
+metadata <- read_delim("APG-OHEC-Retro-M1/delims/metadata.csv", 
                    delim = ",",
                    escape_double = FALSE,
                    trim_ws = TRUE)
@@ -164,7 +180,7 @@ metadata$name <- gsub("^AUSMDU00032107$", "AUSMDU00032107-B", metadata$name)
 metadata$name <- gsub("^AUSMDU00031978$", "AUSMDU00031978-B", metadata$name)
 
 #Read in our table for converting between TEA names
-convert_tea <- read_csv("delims/name_convert_TEA.txt", show_col_types = FALSE)
+convert_tea <- read_csv("APG-OHEC-Retro-M1/delims/name_convert_TEA.txt", show_col_types = FALSE)
 
 #join our table containing TEA names
 metadata <- full_join(convert_tea, metadata, by = "name")
@@ -184,12 +200,13 @@ metadata <- metadata %>% filter(name %in% geno$name)
 #These aren't meant to be included.
 geno <- geno %>% filter(name %in% metadata$name)
 
-
-#Read in our tree
-tree <- ggtree::read.tree("analysis/pad.nwk")
+#Read our tree back in
+tree <- ggtree::read.tree("APG-OHEC-Retro-M1/analysis/RapidNJ_5471.nwk")
 
 #Remove quotes from sample names
-tree$tip.label <- gsub("'", "", tree$tip.label)
+tree$tip.label <- gsub("'", '', tree$tip.label)
+tree$tip.label <- gsub("\\.fa", "", tree$tip.label)
+
 
 #Remove everything not in our tree (e.g. didnt cgMLST properly)
 geno <- geno %>% filter(name %in% tree$tip.label)
@@ -251,7 +268,7 @@ g + geom_bar(position = "fill", stat = "count") +
 library(pheatmap)
 
 #Read in abritamr data
-abritamr <- read_delim("analysis/abritamr_resistance.txt", 
+abritamr <- read_delim("APG-OHEC-Retro-M1/analysis/abritamr_resistance.txt", 
     delim = "\t", escape_double = FALSE, 
     trim_ws = TRUE,
     show_col_types = FALSE)
@@ -419,7 +436,7 @@ genometa <- genometa %>% select(name, starts_with("mlst..")) %>% mutate(allele_c
 ```{r count CIA res, echo=FALSE, fig.height=8, fig.width=12}
 
 #Read in abritamr data
-abritamr <- read_delim("analysis/abritamr_resistance.txt", 
+abritamr <- read_delim("APG-OHEC-Retro-M1/analysis/abritamr_resistance.txt", 
     delim = "\t", escape_double = FALSE, 
     trim_ws = TRUE,
     show_col_types = FALSE)
@@ -722,7 +739,7 @@ long_format_abritamr_processed <- full_join(long_format_abritamr_processed, samp
 genometa <- long_format_abritamr_processed %>% select(name, Strain_MDR_status, Strain_CIA_status, Strain_count_of_AMR_gene_classes, Strain_count_of_AMR_genes) %>% unique() %>% inner_join(genometa)
 
 #Write to file
-long_format_abritamr_processed%>% write_delim("delims/long_format_abritamr_5631.txt", delim = "\t")
+long_format_abritamr_processed%>% write_delim("APG-OHEC-Retro-M1/delims/long_format_abritamr_5471.txt", delim = "\t")
 
 ```
 
@@ -750,5 +767,5 @@ genometa <- genometa %>% full_join(Strain_VF_counts, by = "name") %>% select(nam
 # Write to file
 ```{r}
 
-write_delim(genometa, "delims/genometa_n5631.txt", delim = "\t")
+write_delim(genometa, "APG-OHEC-Retro-M1/delims/genometa_n5471.txt", delim = "\t")
 ```

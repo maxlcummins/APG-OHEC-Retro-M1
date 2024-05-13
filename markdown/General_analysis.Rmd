@@ -1,0 +1,728 @@
+---
+title: "General Analysis"
+author: "Max Cummins"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        theme: spacelab
+        toc: true
+        toc_float: true
+---
+
+```{r setup, include=FALSE}
+#Read in our packages
+library(tidyverse)
+library(vroom)
+library(ggplot2)
+library(xml2)
+library(ggrepel)
+library(caret)
+library(here)
+library(ggtree)
+library(eulerr)
+
+knitr::opts_chunk$set(echo = TRUE, root.dir = here::here())
+
+#Define our not in function
+`%nin%` <- Negate(`%in%`)
+```
+
+## Read in our tree and genomic and metadata dataset
+
+```{r Merge_analysis_outputs, include=FALSE}
+
+genometa <- vroom("../delims/genometa_n5471.txt", show_col_types = FALSE)
+
+#Read in our tree
+tree <- ggtree::read.tree("../analysis/RapidNJ_5471.nwk")
+
+#Remove quotes from sample names
+tree$tip.label <- gsub("'", '', tree$tip.label)
+tree$tip.label <- gsub("\\.fa", "", tree$tip.label)
+
+#Create a list of samples in our cohort
+sample_names <- tree$tip.label %>% as.data.frame() %>% rename('name' = '.')
+
+```
+
+
+## Compute general collection stats
+
+```{r}
+#In total, 5,471 Australian E. coli genomes originating from humans (n=2,992/5,471, 55.13), wild animals (n=858/5,471, 15.81%), livestock (n=641/5,471, 11.89=1%), companion animals (n=375/5,471, 6.91%), environmental sources (n=281/5,471, 5.18%) and food (302/5,471, 5.16%) were analysed.
+breakdown <- genometa %>% group_by(Revised_Source_Niche) %>% tally(sort = T)  %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+breakdown %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+
+```
+
+## Breakdown by year
+```{r}
+#Collection dates ranged from 1986 to 2022, with 98.3% (n= 5336/5,471) collected between 2001 and 2022
+genometa %>% group_by(Collection_Year >= 2001) %>% tally()
+```
+
+#Source breakdown
+```{r}
+#In total, 1,576 of human sourced samples were sourced from extraintestinal infections, while 974 originate from intestinal sites, and 442 lack the appropriate metadata.  
+sources <- genometa %>% filter(Revised_Source_Niche == "Human") %>% group_by(Intestinal_or_Extraintestinal) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+
+```
+
+```{r}
+#Among livestock sourced samples, 48.21% (n=309/641) originate from extraintestinal sites, while 35.57% (n=228/641) originate from intestinal sites and 16.22% (n=104/641) unable to be assigned to either category.
+sources <- genometa %>% filter(Revised_Source_Niche == "Livestock") %>% group_by(Intestinal_or_Extraintestinal) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+```
+
+## Figure 1
+```{r}
+
+```
+
+
+
+```{r}
+#We identified 8 sensu stricto phylogroups within the collection, the most frequently identified being B2 which comprised _% (n=_/5,471) of genomes. Phylogroups A, D and B1 were present at comparable frequencies, cumulatively _% (n=2,482/5,471) of the collection (individually _% [n=_/5,471], _% [n=_/5,471] and _% [n=_/5,471], respectively). 
+
+phylogroups <- genometa %>% group_by(Consensus_phylogroup) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+phylogroups %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+```
+
+```{r}
+#Most B2 (n=_/2,240; _%) and D (n=_/803; _%) genomes were from humans. While _% (n=_/968) of phylogroup A and _% (n=_/711) of phylogroup B1 genomes were from humans, the majority were sourced from wild animals (A: n=_/968; B1: n=_/711), livestock (A: n=_/968; B1: n=_/711) and environmental (A: n=_/968; B1: n=_/711) sources (Figure 2).
+
+phylogroups_by_Source <- genometa %>% group_by(Consensus_phylogroup, Revised_Source_Niche) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+phylogroups_by_Source %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% arrange(Consensus_phylogroup, desc(Count))
+```
+```{r}
+#In total, _ STs were identified, of which _ were known and _ were novel (exhibited novel alleles or novel combinations of known alleles)
+
+STs <- genometa %>% group_by(ST_new) %>% tally(sort=T)
+
+STs <- STs %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% ungroup() %>% mutate(Novel = if_else(str_detect(ST_new, "^[^0-9]"), "Yes", "No"))
+
+STs %>% group_by(Novel) %>% tally()
+```
+
+```{r}
+#The collection was phylogenetically diverse (Figure 2) but predominantly comprised of a small number of STs; while we identified _ singleton STs, the top thirty STs comprised _% (n=_ /5,471) of the collection. We also identified _ novel STs (Supplementary Table 1).
+
+#Singletons
+STs %>% group_by(Count == 1) %>% tally()
+
+#Top 30 STs
+STs %>% head(30) %>% select(Count) %>% sum()
+STs %>% head(30) %>% select(Count) %>% sum()/5471
+
+```
+
+## Define our source and phylogroup colours
+
+```{r}
+#Overwrite with different colours
+source_cols <- c("Companion Animal" = "#59398d",
+         "Environmental" = "#709b46",
+         "Food" = "#c09f3d",
+         "Human" = "#48c595",
+         "Livestock" =  "#c26bbc",
+         "Wild Animal" = "#b9553d")
+
+#Define our colours for our phylogroups
+clermont_cols <- c('#ffe119', '#4363d8', '#f58231', '#dcbeff', '#800000', '#000075', '#9A6324', 'red', '#3cb44b',  'white', '#a9a9a9', 'black')
+
+#Assign our color names for phylogroups
+names(clermont_cols) <- c("A", "B1",  "B2", "C", "D", "E", "F", "G", "E or cladeI", "cladeI", "cladeIII", "cladeIV")
+```
+
+# Figure 2 - Part A
+```{r Part A, echo=FALSE}
+#Create the tree
+p2 <- ggtree(tree,
+        layout = 'circular',
+        open.angle = 0) %<+%
+        genometa
+
+source_phylogroup_df <- p2$data %>% filter(isTip == TRUE) %>% select(label, Revised_Source_Niche, clermontyping..clermontyping_phylogroup) %>% column_to_rownames('label')
+
+p3 <- gheatmap(
+        p = p2,
+        data = source_phylogroup_df,
+        colnames_offset_y = -0.1,
+        font.size = 1.5,
+        hjust = 0,
+        colnames = TRUE,
+        offset = 1,
+        width = 0.3,
+        color = rgb(220, 220, 220, max = 255, alpha = 50)
+        ) +
+theme(legend.position = "right") +#,
+        #legend.box = "vertical",
+        #legend.key.size = unit(1, "mm"),
+        #legend.title = element_blank(),
+        #legend.text = element_text(size = 8)
+        #) +
+scale_fill_manual(
+        values = c(source_cols, clermont_cols),
+        na.value = 'grey'
+        )
+
+p3
+```
+
+## Figure 2 - Part B
+```{r}
+# Prepare the data by counting occurrences
+data_summary <- genometa %>%
+  group_by(Revised_Source_Niche, Consensus_phylogroup) %>%
+  mutate(Consensus_phylogroup = as.factor(rev(sort(Consensus_phylogroup)))) %>% 
+  summarise(Count = n(), .groups = 'drop')
+
+# Create the plot
+ggplot(data_summary, aes(x = Revised_Source_Niche, y = Count, fill = Consensus_phylogroup)) +
+  geom_bar(stat = "identity", position = "fill") +
+  coord_flip() +  # Flips the axes to match the original plot's orientation
+  scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
+  theme_minimal() +  # Optional: Clean minimalistic theme
+  labs(x = "Source Niche", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
+  scale_fill_manual(values = clermont_cols)
+
+
+```
+
+
+## Figure 2 - Part C
+```{r}
+# Prepare the data by counting occurrences
+data_summary <- genometa %>%
+  mutate(ST_other = fct_lump_n(paste0("ST",ST_new), 10)) %>%
+  group_by(ST_other, Revised_Source_Niche) %>%
+  summarise(Count = n(), .groups = 'drop')
+
+# Create the plot
+ggplot(data_summary, aes(x = ST_other, y = Count, fill = Revised_Source_Niche)) +
+  geom_bar(stat = "identity", position = "fill") +
+  coord_flip() +  # Flips the axes to match the original plot's orientation
+  scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
+  theme_minimal() +  # Optional: Clean minimalistic theme
+  labs(x = "Source Niche", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
+  scale_fill_manual(values = source_cols)
+
+```
+
+
+
+```{r}
+#In total, _ isolates (comprising _ isolate pairs) were identified as putative clusters; the remaining _ isolates exceeded this distance from any other isolate in the collection. 
+cgmlst_dists <- vroom("../analysis/cgMLST_dists_5471.txt", show_col_types = FALSE)
+
+cgmlst_dists <- cgmlst_dists %>%
+  pivot_longer(
+    cols = 2:ncol(cgmlst_dists),  # Ensure this references the correct data frame
+    names_to = "Sample 2",
+    values_to = "value"
+  ) %>% rename('Sample 1' = `5471`)
+
+cgmlst_dists <- cgmlst_dists %>% filter(`Sample 1` != `Sample 2`)
+
+cgmlst_dists <- cgmlst_dists %>% filter(`Sample 1` %in% tree$tip.label & `Sample 2` %in% tree$tip.label)
+
+#Isolate pairs
+cgmlst_dists %>% filter(value <= 40) %>% nrow()
+
+#Isolate count
+cgmlst_dists %>% filter(value <= 40) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+
+
+```
+
+```{r}
+#Isolates with STs 131, 963, 1193, 95, 69, 80, 117, 457, 648 and 57 comprised _% (n=_/5,471) of the overall collection (Figure 2 C). 
+#Count
+STs %>% filter(ST_new %in% c(131, 963, 1193, 95, 69, 80, 117, 457, 648, 57)) %>% pull(Count) %>% sum()
+
+#Perc
+STs %>% filter(ST_new %in% c(131, 963, 1193, 95, 69, 80, 117, 457, 648, 57)) %>% pull(Count) %>% sum()/5471
+```
+
+## Data setup for SNP distances
+```{r}
+
+df_all_ST = data.frame()
+
+for(i in list.dirs("../analysis/SKA")){
+        if(str_detect(string = i, pattern = "_dists")){
+                #ST extraction
+                ST <- gsub("_dists", "", basename(i))
+                #Read in SNP distances
+                dists <- read_delim(paste0(i,"/",ST,"_dist_100_SNP.distances.tsv"), 
+                    delim = "\t", escape_double = FALSE, 
+                    trim_ws = TRUE, show_col_types = FALSE)
+                
+                #Read in SNP Clusters
+                clusts <- read_delim(paste0(i,"/",ST,"_dist_100_SNP.clusters.tsv"), 
+                    delim = "\t", escape_double = FALSE, 
+                    trim_ws = TRUE, show_col_types = FALSE)
+                
+                
+                #Combine our metadata and our clusters for use in microreact
+                data_microreact <- left_join(clusts, genometa, by = c("ID" ="name")) %>% select(ID, starts_with("Revised_Source"), Collection_Year, Collection, fimtyper..Fimtype, ColV, Cluster__autocolour)
+                
+                data_microreact1 <- data_microreact %>% rename("Sample 1" = "ID") %>% rev()
+                
+                data_microreact2 <- data_microreact %>% rename("Sample 2" = "ID")
+                
+                dists2 <- inner_join(data_microreact1, dists, by = "Sample 1")
+                
+                dists2 <- inner_join(dists2, data_microreact2, by = "Sample 2")
+                
+                dists2 <- dists2 %>% mutate(across(where(is.factor), as.character))
+                
+                dists_w_metadata <- dists2 %>% rowwise() %>%
+                        mutate(col1 = pmin(Revised_Source_Niche.x, Revised_Source_Niche.y), col2 = pmax(Revised_Source_Niche.x, Revised_Source_Niche.y), source_combo = paste0(col1, "/",col2, collapse = "")) %>% select(-col1, -col2)
+                
+                dists_w_metadata <- dists_w_metadata %>% rowwise() %>%
+                        mutate(col1 = pmin(Revised_Source_Type.x, Revised_Source_Type.y), col2 = pmax(Revised_Source_Type.x, Revised_Source_Type.y), source_type_combo = paste0(col1, "/",col2, collapse = "")) %>% select(-col1, -col2)
+                
+                dists_w_metadata$ST.x <- ST
+                
+                dists_w_metadata$ST.y <- ST
+                
+                df_all_ST <- rbind(df_all_ST, dists_w_metadata)
+                
+               # write_delim(x = data_microreact1, file = paste0(i,"/",ST,"_metadata_microreact.tsv"), delim = "\t")
+        }
+        
+}
+
+df_all_ST <- df_all_ST %>% as.data.frame() %>% filter(`Sample 1` %in% tree$tip.label & `Sample 2` %in% tree$tip.label)
+
+dists_w_metadata_x_source <- df_all_ST %>% as.data.frame() %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+
+cgMLST_clusters <- read_delim(file = "../analysis/clusters.txt", show_col_types = FALSE)
+
+if(!file.exists("../analysis/cgMLST_dists_5471.txt")){
+  unzip(exdir = "../analysis", zipfile = "../analysis/cgMLST_dists_5471.txt.zip", overwrite = FALSE)
+}
+
+distsnew <- inner_join(df_all_ST, cgmlst_dists)
+
+dists_w_metadata_all_source <- distsnew %>% as.data.frame() 
+
+df_all_ST_filtered_SNPs_all <- dists_w_metadata_all_source %>% as.data.frame() 
+```
+
+## SNP distances
+```{r}
+###Of the _ cross-source pairs under analysis, _ (_%) exhibited SNP distances ≤ 100 SNPs
+
+#Compute pairs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% nrow()
+
+#Compute strains
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+```{r}
+#Compute pairs ≤ 100 SNPs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 100) %>% tally()
+
+#Compute percent pairs ≤ 100 SNPs
+tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 100) %>% tally()  %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ TRUE | FALSE))) %>%
+  mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>%
+  rename('Count' = n)# %>% arrange(Consensus_phylogroup, desc(Count))
+
+knitr::kable(tmp, align = 'c')
+
+#Compute strain count
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  filter(SNPs <= 100) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+```{r}
+###The SNP distance thresholds were further classified as follows: > 75 and ≤ 100 (n = _/_; _%), > 50 and ≤ 75 (n = _/_; _%), or > 20 and ≤ 50 (n = _/_; _%).
+
+#Compute pairs > 75 ≤ 100 SNPs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 75 & SNPs <= 100) %>% tally()
+
+#Compute percent pairs > 75 ≤ 100 SNPs
+tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 75 & SNPs <= 100) %>% tally() %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ TRUE | FALSE))) %>%
+  mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>%
+  rename('Count' = n)# %>% arrange(Consensus_phylogroup, desc(Count))
+
+knitr::kable(tmp, align = 'c')
+
+#Compute strain count
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  filter(SNPs > 75 & SNPs <= 100) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+```{r}
+#Compute pairs > 50 ≤ 75 SNPs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 50 & SNPs <= 75) %>% tally()
+
+#Compute percent pairs > 50 ≤ 75 SNPs
+tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 50 & SNPs <= 75) %>% tally() %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ TRUE | FALSE))) %>%
+  mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>%
+  rename('Count' = n)# %>% arrange(Consensus_phylogroup, desc(Count))
+
+knitr::kable(tmp, align = 'c')
+
+
+#Compute strain count
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  filter(SNPs > 50 & SNPs <= 75) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+```{r}
+
+#Compute pairs > 20 ≤ 50 SNPs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 20 & SNPs <= 50) %>% tally()
+
+#Compute percent pairs > 20 ≤ 50 SNPs
+tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 20 & SNPs <= 50) %>% tally() %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ TRUE | FALSE))) %>%
+  mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>%
+  rename('Count' = n)# %>% arrange(Consensus_phylogroup, desc(Count))
+
+knitr::kable(tmp, align = 'c')
+
+
+#Compute strain count
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  filter(SNPs > 20 & SNPs <= 50) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+```{r}
+
+#Compute pairs <- 20 SNPs
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 20) %>% tally()
+
+#Compute percent pairs > 20 ≤ 50 SNPs
+tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 20) %>% tally() %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ TRUE | FALSE))) %>%
+  mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>%
+  rename('Count' = n)# %>% arrange(Consensus_phylogroup, desc(Count))
+
+knitr::kable(tmp, align = 'c')
+
+
+#Compute strain count
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  filter(SNPs <= 20) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>% nrow()
+```
+
+## Figure 3
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(eulerr)
+
+# Set seed for reproducibility
+set.seed(5)
+
+# Define a function to filter and process intersource data
+process_intersource_data <- function(df, snp_threshold) {
+  df %>%
+    filter(SNPs <= snp_threshold) %>%                    # Filter SNPs based on threshold
+    filter(`Sample 1` != `Sample 2`) %>%                 # Exclude rows where Sample 1 equals Sample 2
+    filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%  # Filter different source niches
+    mutate(col1 = pmin(`Sample 1`, `Sample 2`),          # Get the minimum of Sample 1 and Sample 2
+           col2 = pmax(`Sample 1`, `Sample 2`)) %>%      # Get the maximum of Sample 1 and Sample 2
+    ungroup() %>%                                        # Ungroup the dataframe
+    mutate(name_combo = paste0(col1, "/", col2)) %>%     # Create combination name
+    select(-col1, -col2)                                 # Drop col1 and col2
+}
+
+# Process intersource data for different SNP thresholds
+intersource_less_20 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 20)
+intersource_less_50 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 50)
+intersource_less_75 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 75)
+intersource_less_100 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 100)
+intersource_less_200 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 200)
+intersource_less_500 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 500)
+intersource_less_1000 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 1000)
+intersource_less_2500 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 2500)
+intersource_less_5000 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 5000)
+intersource_less_7500 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 7500)
+intersource_less_10000 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 10000)
+intersource_total_11350 <- process_intersource_data(df_all_ST_filtered_SNPs_all, 11350)
+
+# Create a list of sets for Euler diagram
+sets <- list(
+  '20' = intersource_less_20$name_combo,
+  '50' = intersource_less_50$name_combo,
+  '75' = intersource_less_75$name_combo,
+  '100' = intersource_less_100$name_combo,
+  '200' = intersource_less_200$name_combo,
+  '500' = intersource_less_500$name_combo,
+  '1000' = intersource_less_1000$name_combo,
+  '2500' = intersource_less_2500$name_combo,
+  '5000' = intersource_less_5000$name_combo,
+  '7500' = intersource_less_7500$name_combo,
+  '11,350' = intersource_total_11350$name_combo
+)
+
+# Generate and plot the Euler diagram
+fit <- euler(sets)
+plot(fit,
+     quantities = TRUE,
+     lty = c(1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2),         # Line types
+     fills = rev(c("#FFFFF0",                           # Colors for the fills
+                   "grey24",
+                   "grey36",
+                   "grey48",
+                   "grey60",
+                   "grey72",
+                   "grey84",
+                   "#FF6A6A",
+                   "#FFA500",
+                   "#FFFF00",
+                   "#FFFFF0"))
+)
+
+
+```
+## Figure 3 Table for custom annotation
+```{r}
+# Define the breaks and labels for the bins
+breaks <- c(0, 20, 50, 75, 100, 200, 500, 1000, 5000, 7500, Inf)
+labels <- c("0-20", "21-50", "51-75", "76-100", "101-200", "201-500", "501-1000", "1001-5000", "5001-7500", "7500+")
+
+# Bin the data
+binned_SNPs <- df_all_ST_filtered_SNPs_all %>%
+  filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+  select(`Sample 1`, `Sample 2`, SNPs) %>%
+  mutate(Bin = cut(SNPs, breaks = breaks, labels = labels, right = FALSE))
+
+#Summarize the data by bin
+summary <- binned_SNPs %>%
+  group_by(Bin) %>%
+  summarise(Count = n(), .groups = 'drop')
+
+#Add percentages
+summary <- summary %>% mutate(Percentage = scales::percent(Count/sum(summary$Count), accuracy = 0.01))
+
+#Create aggregating column for labels
+summary<- summary %>% mutate(label = paste0(Bin, " SNPs (n=",Count,"/", sum(summary$Count), "; ", Percentage, ")"))
+
+# View summary
+
+# Display the final table
+knitr::kable(summary, align = 'c')
+```
+
+```{r}
+#The top 10 STs linked to putative clusters (as per cgMLST analyses) comprised _ isolates, _ of which were no closer than 100 SNPs from any other isolates under analysis. From the remaining _ isolates _ clusters emerged, each comprising two or more isolates differing by ≤ 100 SNPs. Of these, _ comprised cross-source clusters, (cluster sizes: min = _, median = _, max = _) and _ comprised mono-source clusters (cluster sizes: min = _, median = _, max = _). 
+
+# Load necessary libraries
+library(dplyr)
+library(tidyr)
+
+# Create base_table with unique values for each ST.x
+base_table <- df_all_ST_filtered_SNPs_all %>%
+  group_by(ST.x) %>%                            # Group by ST.x
+  select(ST.x, `Sample 1`, `Sample 2`) %>%            # Select the Sample 1 and Sample 2 columns
+  distinct() %>%                                # Remove duplicate rows
+  pivot_longer(cols = c(`Sample 1`, `Sample 2`), values_to = "unique_value") %>% # Pivot longer to create a single column of unique values
+  select(-name) %>%                             # Remove the temporary 'name' column created by pivot_longer
+  unique() %>%                                  # Keep only unique rows
+  distinct(unique_value) %>%                    # Keep distinct unique values
+  tally() %>%                                   # Count the number of unique values
+  rename("Count of ST" = n) %>%                 # Rename our column
+  bind_rows(summarise(.,                        # Add a row for total
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ "Total")))
+
+# Create count_of_clustered_samples with SNPs less than 100
+count_of_clustered_samples <- df_all_ST_filtered_SNPs_all %>%
+  filter(SNPs < 100) %>%                        # Filter rows where SNPs are less than 100
+  group_by(ST.x) %>%                            # Group by ST.x
+  select(ST.x, `Sample 1`, `Sample 2`) %>%            # Select the Sample 1 and Sample 2 columns
+  distinct() %>%                                # Remove duplicate rows
+  pivot_longer(cols = c(`Sample 1`, `Sample 2`), values_to = "unique_value") %>% # Pivot longer to create a single column of unique values
+  select(-name) %>%                             # Remove the temporary 'name' column created by pivot_longer
+  unique() %>%                                  # Keep only unique rows
+  distinct(unique_value) %>%                    # Keep distinct unique values
+  tally() %>%                                   # Count the number of unique values
+  rename("Count of Clustered Samples" = n)  %>% # Rename our column
+  bind_rows(summarise(.,                        # Add a row for total
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ "Total")))
+
+# Create clusters with Sample 1
+clusters_1 <- df_all_ST_filtered_SNPs_all %>%
+  select(`Sample 1`, ST.x, Cluster__autocolour.x, Revised_Source_Niche.x) %>% # Select relevant columns
+  rename("Sample" = "Sample 1",                # Rename columns for consistency
+         "Cluster" = "Cluster__autocolour.x", 
+         "Revised_Source_Niche" = "Revised_Source_Niche.x")
+
+# Create clusters with Sample 2 and combine with clusters_1
+clusters_2 <- df_all_ST_filtered_SNPs_all %>%
+  select(`Sample 2`, ST.x, Cluster__autocolour.y, Revised_Source_Niche.y) %>% # Select relevant columns
+  rename("Sample" = "Sample 2",                # Rename columns for consistency
+         "Cluster" = "Cluster__autocolour.y", 
+         "Revised_Source_Niche" = "Revised_Source_Niche.y")
+
+# Combine the two clusters and remove duplicates
+clusters <- bind_rows(clusters_1, clusters_2) %>% unique()
+
+# Count clusters with more than one sample
+count_of_clusters <- clusters %>%
+  select(-Revised_Source_Niche) %>%             # Exclude Revised_Source_Niche column
+  group_by(ST.x, Cluster) %>%                   # Group by ST.x and Cluster
+  tally() %>%                                   # Count the number of samples in each cluster
+  filter(n > 1) %>%                             # Filter clusters with more than one sample
+  group_by(ST.x) %>%                            # Group by ST.x
+  tally() %>%                                   # Count the number of clusters
+  rename("Count of Clusters" = n) %>%           # Rename our column
+  bind_rows(summarise(.,                        # Add a row for total
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ "Total")))
+
+# Identify cross-sectoral clusters
+clusters_by_source <- clusters %>%
+  mutate(val_col = 1) %>%                       # Add a column with a constant value
+  select(-Sample) %>%                           # Remove the Sample column
+  pivot_wider(names_from = "Revised_Source_Niche", values_from = "val_col", values_fill = 0, values_fn = sum) %>% # Pivot wider to get sectoral columns
+  rowwise() %>%                                 # Operate row-wise
+  mutate(Cross_sectoral = sum(c_across(Livestock:`Wild Animal`) > 0) > 1) %>% # Add a column indicating cross-sectoral clusters
+  mutate(Cluster_Strain_Count = Livestock + `Companion Animal` + Human + Food + Environmental + `Wild Animal`) # Add a column indicating count of strains per cluster
+
+# Create Cross_and_mono_clusters by filtering clusters with more than one strain, then tallying and pivoting
+Cross_and_mono_clusters <- clusters_by_source %>%
+  filter(Cluster_Strain_Count > 1) %>%          # Filter clusters with more than one strain
+  select(ST.x, Cluster, Cross_sectoral) %>%     # Select relevant columns
+  group_by(ST.x, Cross_sectoral == TRUE) %>%    # Group by ST.x and whether the cluster is cross-sectoral
+  tally() %>%                                   # Count the number of clusters in each group
+  pivot_wider(names_from = `Cross_sectoral == TRUE`, values_from = n, values_fill = 0) %>% # Pivot wider to get separate columns for cross-sectoral and mono-sectoral clusters
+  rename("Mono Sectoral Clusters" = `FALSE`,    # Rename columns for clarity
+         "Cross Sectoral Clusters" = `TRUE`) %>%# Rename our column
+  ungroup %>%
+  bind_rows(summarise(.,                        # Add a row for total
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~ "Total")))
+
+# Create stats_cross_cluster_size by summarizing cross-sectoral clusters
+stats_cross_cluster_size <- clusters_by_source %>%
+  filter(Cross_sectoral == TRUE) %>%                                              # Filter cross-sectoral clusters
+  group_by(ST.x) %>%                                                              # Group by ST.x
+  summarise("Minimum Cross-Source Cluster Size" = min(Cluster_Strain_Count),      # Calculate minimum cluster size
+            "Median Cross-Source Cluster Size" = median(Cluster_Strain_Count),    # Calculate median cluster size
+            "Maximum Cross-Source Cluster Size" = max(Cluster_Strain_Count)) %>%  # Calculate maximum cluster size
+  bind_rows(summarise(.,                                                          # Add a row for total
+                      "ST.x" = "Total",
+                      "Minimum Cross-Source Cluster Size" = min(`Minimum Cross-Source Cluster Size`),
+                      "Median Cross-Source Cluster Size" = median(`Median Cross-Source Cluster Size`),
+                      "Maximum Cross-Source Cluster Size" = max(`Maximum Cross-Source Cluster Size`)))
+
+# Combine all the tables into one final table
+final_table <- base_table %>%
+  left_join(count_of_clustered_samples, by = "ST.x") %>%  # Join with count_of_clustered_samples
+  left_join(count_of_clusters, by = "ST.x") %>%           # Join with count_of_clusters
+  left_join(Cross_and_mono_clusters, by = "ST.x") %>%     # Join with Cross_and_mono_clusters
+  left_join(stats_cross_cluster_size, by = "ST.x") %>%    # Join with stats_cross_cluster_size
+  rename("ST" = ST.x) %>%                                 # Rename our column
+  mutate(ST = str_replace(ST, "ST", "")) %>%              # Strip out the ST characters
+  arrange(desc(`Count of ST`))
+
+# Put row for total at the end
+final_row <- final_table %>% filter(ST == "Total") # Extract final row
+
+final_table <- final_table %>% filter(ST != "Total") %>% # Filter out final row
+  bind_rows(final_row)                                   # Bind final row back in
+
+# Display the final table
+knitr::kable(final_table, align = 'c')
+
+```
+
+
+## Figure 6
+```{r}
+
+
+pal <- colorRampPalette(c("red", "yellow", "blue"))
+dot_cols <- pal(41)
+
+df_all_ST_filtered_SNPs_all %>%
+        mutate(source_combo = str_replace(source_combo, 'Companion Animal', 'Comp. Animal')) %>% 
+        mutate(source_combo = str_replace(source_combo, 'Environmental', 'Environ.')) %>% 
+        filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% 
+        filter(value < 40)  %>% 
+        mutate(value = as.factor(value)) %>%
+        rename('Allelic\nDistance\n(cgMLST)' = value) %>%
+        rename('Sequence type' = ST.x) %>%
+        ggplot() +
+        geom_boxplot(aes(x = SNPs, y = `Sequence type`)) +
+        geom_jitter(aes(x = SNPs, y = `Sequence type`, color = `Allelic\nDistance\n(cgMLST)`), size = 0.25) +
+        scale_color_manual(values = dot_cols, breaks = as.factor(0:40)) +
+        facet_wrap(~source_combo, nrow = 7, ncol = 2, strip.position="right") +
+        theme(axis.text.x = element_text(angle = 90)) +
+        geom_vline(xintercept = 100, color = "red", linetype = "dashed") +
+        scale_x_continuous(breaks = seq(0,1300, by = 100)) +
+        guides(colour = guide_legend(override.aes = list(size=1.5), ncol = 1))
+```
+
+
