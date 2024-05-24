@@ -3,10 +3,12 @@ title: "General Analysis"
 author: "Max Cummins"
 date: "`r Sys.Date()`"
 output:
-    html_document:
-        theme: spacelab
-        toc: true
-        toc_float: true
+  html_document:
+    theme: spacelab
+    toc: true
+    toc_float: true
+  pdf_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,8 +22,14 @@ library(caret)
 library(here)
 library(ggtree)
 library(eulerr)
+library(igraph)
+library(ggalluvial)
+library(hues)
+library(ggpubr)
+library(paletteer)
+library(ggVennDiagram)
 
-knitr::opts_chunk$set(echo = TRUE, root.dir = here::here())
+#knitr::opts_chunk$set(echo = TRUE, root.dir = here::here())
 
 #Define our not in function
 `%nin%` <- Negate(`%in%`)
@@ -49,23 +57,23 @@ sample_names <- tree$tip.label %>% as.data.frame() %>% rename('name' = '.')
 ## Compute general collection stats
 
 ```{r}
-#In total, 5,471 Australian E. coli genomes originating from humans (n=2,992/5,471, 55.13), wild animals (n=858/5,471, 15.81%), livestock (n=641/5,471, 11.89=1%), companion animals (n=375/5,471, 6.91%), environmental sources (n=281/5,471, 5.18%) and food (302/5,471, 5.16%) were analysed.
+#In total,  Australian E. coli genomes originating from humans (n=2,/5,471, ), wild animals (n=/5,471, %), livestock (n=/5,471, %), companion animals (n=/5,471, %), environmental sources (n=/5,471, %) and food (/5,471, %) were analysed.
 breakdown <- genometa %>% group_by(Revised_Source_Niche) %>% tally(sort = T)  %>% 
   bind_rows(summarise(.,
                       across(where(is.numeric), sum),
                       across(where(is.character), ~"Total")))
 
-breakdown %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+breakdown %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% knitr::kable(., align = 'c')
 
 ```
 
 ## Breakdown by year
 ```{r}
 #Collection dates ranged from 1986 to 2022, with 98.3% (n= 5336/5,471) collected between 2001 and 2022
-genometa %>% group_by(Collection_Year >= 2001) %>% tally()
+genometa %>% group_by(Collection_Year >= 2001) %>% tally()  %>% knitr::kable(., align = 'c')
 ```
 
-#Source breakdown
+## Source breakdown
 ```{r}
 #In total, 1,576 of human sourced samples were sourced from extraintestinal infections, while 974 originate from intestinal sites, and 442 lack the appropriate metadata.  
 sources <- genometa %>% filter(Revised_Source_Niche == "Human") %>% group_by(Intestinal_or_Extraintestinal) %>% tally(sort=T)   %>% 
@@ -73,7 +81,7 @@ sources <- genometa %>% filter(Revised_Source_Niche == "Human") %>% group_by(Int
                       across(where(is.numeric), sum),
                       across(where(is.character), ~"Total")))
 
-sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
+sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)  %>% knitr::kable(., align = 'c')
 
 ```
 
@@ -84,57 +92,7 @@ sources <- genometa %>% filter(Revised_Source_Niche == "Livestock") %>% group_by
                       across(where(is.numeric), sum),
                       across(where(is.character), ~"Total")))
 
-sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
-```
-
-## Figure 1
-```{r}
-
-```
-
-
-
-```{r}
-#We identified 8 sensu stricto phylogroups within the collection, the most frequently identified being B2 which comprised _% (n=_/5,471) of genomes. Phylogroups A, D and B1 were present at comparable frequencies, cumulatively _% (n=2,482/5,471) of the collection (individually _% [n=_/5,471], _% [n=_/5,471] and _% [n=_/5,471], respectively). 
-
-phylogroups <- genometa %>% group_by(Consensus_phylogroup) %>% tally(sort=T)   %>% 
-  bind_rows(summarise(.,
-                      across(where(is.numeric), sum),
-                      across(where(is.character), ~"Total")))
-
-phylogroups %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)
-```
-
-```{r}
-#Most B2 (n=_/2,240; _%) and D (n=_/803; _%) genomes were from humans. While _% (n=_/968) of phylogroup A and _% (n=_/711) of phylogroup B1 genomes were from humans, the majority were sourced from wild animals (A: n=_/968; B1: n=_/711), livestock (A: n=_/968; B1: n=_/711) and environmental (A: n=_/968; B1: n=_/711) sources (Figure 2).
-
-phylogroups_by_Source <- genometa %>% group_by(Consensus_phylogroup, Revised_Source_Niche) %>% tally(sort=T)   %>% 
-  bind_rows(summarise(.,
-                      across(where(is.numeric), sum),
-                      across(where(is.character), ~"Total")))
-
-phylogroups_by_Source %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% arrange(Consensus_phylogroup, desc(Count))
-```
-```{r}
-#In total, _ STs were identified, of which _ were known and _ were novel (exhibited novel alleles or novel combinations of known alleles)
-
-STs <- genometa %>% group_by(ST_new) %>% tally(sort=T)
-
-STs <- STs %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% ungroup() %>% mutate(Novel = if_else(str_detect(ST_new, "^[^0-9]"), "Yes", "No"))
-
-STs %>% group_by(Novel) %>% tally()
-```
-
-```{r}
-#The collection was phylogenetically diverse (Figure 2) but predominantly comprised of a small number of STs; while we identified _ singleton STs, the top thirty STs comprised _% (n=_ /5,471) of the collection. We also identified _ novel STs (Supplementary Table 1).
-
-#Singletons
-STs %>% group_by(Count == 1) %>% tally()
-
-#Top 30 STs
-STs %>% head(30) %>% select(Count) %>% sum()
-STs %>% head(30) %>% select(Count) %>% sum()/5471
-
+sources %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)  %>% knitr::kable(., align = 'c')
 ```
 
 ## Define our source and phylogroup colours
@@ -155,19 +113,216 @@ clermont_cols <- c('#ffe119', '#4363d8', '#f58231', '#dcbeff', '#800000', '#0000
 names(clermont_cols) <- c("A", "B1",  "B2", "C", "D", "E", "F", "G", "E or cladeI", "cladeI", "cladeIII", "cladeIV")
 ```
 
+
+## Figure 1
+```{r}
+data_summary <- genometa %>%
+  group_by(Revised_Source_Niche, Collection_Year, State) %>%
+  mutate(State = replace_na(State, "Unknown")) %>%
+  summarise(Count = n(), .groups = 'drop')
+
+# Create the bubble plot
+ggplot(data_summary, aes(x = Collection_Year, y = Revised_Source_Niche)) +
+  geom_jitter(aes(size = Count, color = State), height = 0.4, alpha = 0.7) +
+  scale_size(range = c(1, 10), name = "Number of isolates") +
+  geom_hline(yintercept = seq_along(unique(data_summary$Revised_Source_Niche)) - 0.5, color = "grey80") + # Add separating lines
+  scale_x_continuous(breaks = seq(1986, 2023, by = 1)) + # Show every year on the x-axis
+  scale_color_manual(values = c("ACT" = "lightblue", "NSW" = "orange", "NT" = "darkred", "QLD" = "purple", 
+                                "SA" = "red", "TAS" = "green", "WA" = "pink", "VIC" = "darkgreen", 
+                                "Unknown" = "grey"), name = "State") +
+  theme_minimal() +
+  labs(x = "Year of collection", y = "Source") +
+  theme(
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    legend.position = "right"
+  )
+```
+
+## Figure 1B
+
+```{r}
+# Aggregate the data to count the number of isolates for each combination of Year and Source
+agg_data <- genometa %>%
+  group_by(Revised_Source_Niche, Revised_Source_Type, Intestinal_or_Extraintestinal) %>%
+  mutate(Revised_Source_Type = fct_lump_min(Revised_Source_Type, 10)) %>%
+  summarise(Isolates = n())
+
+# Create the alluvial plot
+ggplot(agg_data,
+       aes(axis1 = Revised_Source_Niche, axis2 = Revised_Source_Type, axis3 = Intestinal_or_Extraintestinal, y = Isolates)) +
+  geom_alluvium(aes(fill = Revised_Source_Niche), width = 1/12) +
+  geom_stratum(fill = "white", width = 1/12, color = "black") +
+  #geom_text(stat = "stratum", aes(label = after_stat(stratum))) +
+  scale_x_discrete(limits = c("Source Niche", "Source Type", "Site of Origin"), expand = c(0.05, 0.05)) +
+  scale_y_continuous(breaks = seq(0, 5471, by = 200), expand = c(0,0)) + # Show every year on the x-axis
+  scale_fill_manual(values = source_cols) +
+  theme(legend.position = "none",
+        panel.background = element_rect(fill = "grey95", color = NA), # Ensure the panel background is white
+    ) +
+  labs(#title = "",
+       x = "",
+       y = "Number of Isolates")
+```
+```{r}
+# Generate the color palette
+Niche_cols <- source_cols
+
+
+# Create a data frame for the color swatch plot
+color_swatch <- data.frame(
+  Revised_Source_Niche = names(Niche_cols),
+  Color = Niche_cols
+)
+
+# Create the swatch plot
+cols_plot <- ggplot(color_swatch, aes(x = Revised_Source_Niche, y = 0.5, fill = Revised_Source_Niche)) +
+  geom_tile(color = "black", width = 0.5, height = 0.5) +
+  scale_fill_manual(values = Niche_cols) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "none"
+  ) +
+  labs(title = "Color Swatch for Source Niche")
+
+#Show our plot
+cols_plot
+```
+
+
+```{r}
+# Generate the color palette
+Revised_Source_Type_cols <- iwanthue(length(unique(agg_data$Revised_Source_Type)))
+names(Revised_Source_Type_cols) <- unique(agg_data$Revised_Source_Type)
+
+# Create a data frame for the color swatch plot
+color_swatch <- data.frame(
+  Revised_Source_Type = names(Revised_Source_Type_cols),
+  Color = Revised_Source_Type_cols
+)
+
+# Create the swatch plot
+cols_plot <- ggplot(color_swatch, aes(x = Revised_Source_Type, y = 1, fill = Revised_Source_Type)) +
+  geom_tile(color = "black", width = 0.9, height = 0.9) +
+  scale_fill_manual(values = Revised_Source_Type_cols) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "none"
+  ) +
+  labs(title = "Color Swatch for Source Type")
+
+#Show our plot
+cols_plot
+```
+
+
+```{r}
+# Generate the color palette
+Intestinal_or_Extraintestinal_type_cols <- iwanthue(length(unique(agg_data$Intestinal_or_Extraintestinal)))
+names(Intestinal_or_Extraintestinal_type_cols) <- unique(agg_data$Intestinal_or_Extraintestinal)
+
+# Create a data frame for the color swatch plot
+color_swatch <- data.frame(
+  Intestinal_or_Extraintestinal = names(Intestinal_or_Extraintestinal_type_cols),
+  Color = Intestinal_or_Extraintestinal_type_cols
+)
+
+# Create the swatch plot
+cols_plot <- ggplot(color_swatch, aes(x = Intestinal_or_Extraintestinal, y = 1, fill = Intestinal_or_Extraintestinal)) +
+  geom_tile(color = "black", width = 0.9, height = 0.9) +
+  scale_fill_manual(values = Intestinal_or_Extraintestinal_type_cols) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_blank(),
+    axis.title = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "none"
+  ) +
+  labs(title = "Color Swatch for Intestinal or Extraintestinal")
+
+#Show our plot
+cols_plot
+```
+
+
+```{r}
+#We identified 8 sensu stricto phylogroups within the collection, the most frequently identified being B2 which comprised _% (n=_/5,471) of genomes. Phylogroups A, D and B1 were present at comparable frequencies, cumulatively _% (n=2,482/5,471) of the collection (individually _% [n=_/5,471], _% [n=_/5,471] and _% [n=_/5,471], respectively). 
+
+phylogroups <- genometa %>% group_by(Consensus_phylogroup) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+phylogroups %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n)  %>% knitr::kable(., align = 'c')
+```
+
+```{r}
+#Most B2 (n=_/2,240; _%) and D (n=_/803; _%) genomes were from humans. While _% (n=_/968) of phylogroup A and _% (n=_/711) of phylogroup B1 genomes were from humans, the majority were sourced from wild animals (A: n=_/968; B1: n=_/711), livestock (A: n=_/968; B1: n=_/711) and environmental (A: n=_/968; B1: n=_/711) sources (Figure 2).
+
+phylogroups_by_Source <- genometa %>% group_by(Consensus_phylogroup, Revised_Source_Niche) %>% tally(sort=T)   %>% 
+  bind_rows(summarise(.,
+                      across(where(is.numeric), sum),
+                      across(where(is.character), ~"Total")))
+
+phylogroups_by_Source %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% arrange(Consensus_phylogroup, desc(Count))  %>% knitr::kable(., align = 'c')
+```
+```{r}
+#In total, _ STs were identified, of which _ were known and _ were novel (exhibited novel alleles or novel combinations of known alleles)
+
+STs <- genometa %>% group_by(ST_new) %>% tally(sort=T)
+
+STs <- STs %>% mutate(Percentage = scales::percent(n/max(n), accuracy = 0.01)) %>% rename('Count' = n) %>% ungroup() %>% mutate(Novel = if_else(str_detect(ST_new, "^[^0-9]"), "Yes", "No"))
+
+STs %>% group_by(Novel) %>% tally() %>% knitr::kable(., align = 'c')
+```
+
+```{r}
+#The collection was phylogenetically diverse (Figure 2) but predominantly comprised of a small number of STs; while we identified _ singleton STs, the top thirty STs comprised _% (n=_ /5,471) of the collection. We also identified _ novel STs (Supplementary Table 1).
+
+#Singletons
+STs %>% group_by(Count == 1) %>% tally()  %>% knitr::kable(., align = 'c')
+
+#Top 30 ST Count
+STs %>% head(30) %>% select(Count) %>% sum()
+
+#Top 30 STs as percentage of dataset
+STs %>% head(30) %>% select(Count) %>% sum()/5471
+
+```
+
+
+
 # Figure 2 - Part A
-```{r Part A, echo=FALSE}
+```{r Part A, echo=FALSE, warning=FALSE}
 #Create the tree
+tree_df <- genometa %>%
+  select(name, Revised_Source_Niche, clermontyping..clermontyping_phylogroup, Revised_Source_Type, State, Intestinal_or_Extraintestinal) %>%
+  mutate(State = replace_na(State, "Unknown")) %>%
+  mutate(Revised_Source_Type = fct_lump_min(Revised_Source_Type, 10))
+  
+
 p2 <- ggtree(tree,
         layout = 'circular',
         open.angle = 0) %<+%
-        genometa
+        tree_df +
+  geom_tippoint(aes(colour = State), size = 0.2, alpha = 0.5) +
+  scale_color_manual(values = c("ACT" = "lightblue", "NSW" = "orange", "NT" = "darkred", "QLD" = "purple", 
+                                "SA" = "red", "TAS" = "green", "WA" = "pink", "VIC" = "darkgreen", 
+                                "Unknown" = "grey"))
 
-source_phylogroup_df <- p2$data %>% filter(isTip == TRUE) %>% select(label, Revised_Source_Niche, clermontyping..clermontyping_phylogroup) %>% column_to_rownames('label')
+tree_df <- p2$data %>% filter(isTip == TRUE) %>% select(label, clermontyping..clermontyping_phylogroup, Revised_Source_Type, Revised_Source_Niche, Intestinal_or_Extraintestinal) %>% column_to_rownames('label')
 
 p3 <- gheatmap(
         p = p2,
-        data = source_phylogroup_df,
+        data = tree_df,
         colnames_offset_y = -0.1,
         font.size = 1.5,
         hjust = 0,
@@ -183,9 +338,9 @@ theme(legend.position = "right") +#,
         #legend.text = element_text(size = 8)
         #) +
 scale_fill_manual(
-        values = c(source_cols, clermont_cols),
+        values = c(source_cols, clermont_cols, Intestinal_or_Extraintestinal_type_cols, Revised_Source_Type_cols),
         na.value = 'grey'
-        )
+        ) 
 
 p3
 ```
@@ -203,7 +358,12 @@ ggplot(data_summary, aes(x = Revised_Source_Niche, y = Count, fill = Consensus_p
   geom_bar(stat = "identity", position = "fill") +
   coord_flip() +  # Flips the axes to match the original plot's orientation
   scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
-  theme_minimal() +  # Optional: Clean minimalistic theme
+    theme(axis.text.y = element_text(size = 16),
+        axis.text.x = element_text(size = 16),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.position = "none") +  # Optional: Clean minimalistic theme
   labs(x = "Source Niche", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
   scale_fill_manual(values = clermont_cols)
 
@@ -224,8 +384,13 @@ ggplot(data_summary, aes(x = ST_other, y = Count, fill = Revised_Source_Niche)) 
   geom_bar(stat = "identity", position = "fill") +
   coord_flip() +  # Flips the axes to match the original plot's orientation
   scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
-  theme_minimal() +  # Optional: Clean minimalistic theme
-  labs(x = "Source Niche", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
+    theme(axis.text.y = element_text(size = 16),
+        axis.text.x = element_text(size = 16),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.position = "none") +  # Optional: Clean minimalistic theme
+  labs(x = "Sequence Type", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
   scale_fill_manual(values = source_cols)
 
 ```
@@ -270,70 +435,95 @@ STs %>% filter(ST_new %in% c(131, 963, 1193, 95, 69, 80, 117, 457, 648, 57)) %>%
 ```
 
 ## Data setup for SNP distances
-```{r}
+```{r warning=TRUE}
+# Initialize an empty data frame to store all sequence types' data
+df_all_ST <- data.frame()
 
-df_all_ST = data.frame()
-
-for(i in list.dirs("../analysis/SKA")){
-        if(str_detect(string = i, pattern = "_dists")){
-                #ST extraction
-                ST <- gsub("_dists", "", basename(i))
-                #Read in SNP distances
-                dists <- read_delim(paste0(i,"/",ST,"_dist_100_SNP.distances.tsv"), 
-                    delim = "\t", escape_double = FALSE, 
-                    trim_ws = TRUE, show_col_types = FALSE)
-                
-                #Read in SNP Clusters
-                clusts <- read_delim(paste0(i,"/",ST,"_dist_100_SNP.clusters.tsv"), 
-                    delim = "\t", escape_double = FALSE, 
-                    trim_ws = TRUE, show_col_types = FALSE)
-                
-                
-                #Combine our metadata and our clusters for use in microreact
-                data_microreact <- left_join(clusts, genometa, by = c("ID" ="name")) %>% select(ID, starts_with("Revised_Source"), Collection_Year, Collection, fimtyper..Fimtype, ColV, Cluster__autocolour)
-                
-                data_microreact1 <- data_microreact %>% rename("Sample 1" = "ID") %>% rev()
-                
-                data_microreact2 <- data_microreact %>% rename("Sample 2" = "ID")
-                
-                dists2 <- inner_join(data_microreact1, dists, by = "Sample 1")
-                
-                dists2 <- inner_join(dists2, data_microreact2, by = "Sample 2")
-                
-                dists2 <- dists2 %>% mutate(across(where(is.factor), as.character))
-                
-                dists_w_metadata <- dists2 %>% rowwise() %>%
-                        mutate(col1 = pmin(Revised_Source_Niche.x, Revised_Source_Niche.y), col2 = pmax(Revised_Source_Niche.x, Revised_Source_Niche.y), source_combo = paste0(col1, "/",col2, collapse = "")) %>% select(-col1, -col2)
-                
-                dists_w_metadata <- dists_w_metadata %>% rowwise() %>%
-                        mutate(col1 = pmin(Revised_Source_Type.x, Revised_Source_Type.y), col2 = pmax(Revised_Source_Type.x, Revised_Source_Type.y), source_type_combo = paste0(col1, "/",col2, collapse = "")) %>% select(-col1, -col2)
-                
-                dists_w_metadata$ST.x <- ST
-                
-                dists_w_metadata$ST.y <- ST
-                
-                df_all_ST <- rbind(df_all_ST, dists_w_metadata)
-                
-               # write_delim(x = data_microreact1, file = paste0(i,"/",ST,"_metadata_microreact.tsv"), delim = "\t")
-        }
+# Loop through directories containing SNP distance data
+for (i in list.dirs("../analysis/SKA")) {
+    # Check if directory name indicates distance data
+    if (str_detect(string = i, pattern = "_dists")) {
+        # Extract sequence type (ST) from the directory name
+        ST <- gsub("_dists", "", basename(i))
         
+        # Read in SNP distances
+        dists <- read_delim(paste0(i, "/", ST, "_dist_100_SNP.distances.tsv"), 
+                            delim = "\t", escape_double = FALSE, 
+                            trim_ws = TRUE, show_col_types = FALSE)
+        
+        # Read in SNP Clusters
+        clusts <- read_delim(paste0(i, "/", ST, "_dist_100_SNP.clusters.tsv"), 
+                             delim = "\t", escape_double = FALSE, 
+                             trim_ws = TRUE, show_col_types = FALSE)
+        
+        # Combine metadata and clusters for visualization in Microreact
+        data_microreact <- left_join(clusts, genometa, by = c("ID" = "name")) %>%
+                           select(ID, starts_with("Revised_Source"), Collection_Year, Collection, fimtyper..Fimtype, ColV, Cluster__autocolour)
+        
+        # Rename and reverse columns for joining
+        data_microreact1 <- data_microreact %>%
+                            rename("Sample 1" = ID) %>%
+                            rev()
+        
+        data_microreact2 <- data_microreact %>%
+                            rename("Sample 2" = ID)
+        
+        # Join SNP distance data with metadata
+        dists2 <- inner_join(data_microreact1, dists, by = "Sample 1")
+        dists2 <- inner_join(dists2, data_microreact2, by = "Sample 2")
+        
+        # Convert factor columns to character for easier manipulation
+        dists2 <- dists2 %>% mutate(across(where(is.factor), as.character))
+        
+        # Create combinations of metadata fields
+        dists_w_metadata <- dists2 %>%
+                            rowwise() %>%
+                            mutate(col1 = pmin(Revised_Source_Niche.x, Revised_Source_Niche.y),
+                                   col2 = pmax(Revised_Source_Niche.x, Revised_Source_Niche.y),
+                                   source_combo = paste0(col1, "/", col2, collapse = "")) %>%
+                            select(-col1, -col2)
+        
+        dists_w_metadata <- dists_w_metadata %>%
+                            rowwise() %>%
+                            mutate(col1 = pmin(Revised_Source_Type.x, Revised_Source_Type.y),
+                                   col2 = pmax(Revised_Source_Type.x, Revised_Source_Type.y),
+                                   source_type_combo = paste0(col1, "/", col2, collapse = "")) %>%
+                            select(-col1, -col2)
+        
+        # Assign ST labels
+        dists_w_metadata$ST.x <- ST
+        dists_w_metadata$ST.y <- ST
+        
+        # Append to main data frame
+        df_all_ST <- rbind(df_all_ST, dists_w_metadata)
+        
+        # Optional: write data to file for Microreact (uncomment if needed)
+        # write_delim(x = data_microreact1, file = paste0(i, "/", ST, "_metadata_microreact.tsv"), delim = "\t")
+    }
 }
 
-df_all_ST <- df_all_ST %>% as.data.frame() %>% filter(`Sample 1` %in% tree$tip.label & `Sample 2` %in% tree$tip.label)
+# Filter the data to include only samples that are present in the phylogenetic tree
+df_all_ST <- df_all_ST %>%
+              as.data.frame() %>%
+              filter(`Sample 1` %in% tree$tip.label & `Sample 2` %in% tree$tip.label)
 
-dists_w_metadata_x_source <- df_all_ST %>% as.data.frame() %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
+# Filter for entries where source niches differ
+dists_w_metadata_x_source <- df_all_ST %>%
+                             as.data.frame() %>%
+                             filter(Revised_Source_Niche.x != Revised_Source_Niche.y)
 
+# Read in cgMLST clusters
 cgMLST_clusters <- read_delim(file = "../analysis/clusters.txt", show_col_types = FALSE)
 
-if(!file.exists("../analysis/cgMLST_dists_5471.txt")){
-  unzip(exdir = "../analysis", zipfile = "../analysis/cgMLST_dists_5471.txt.zip", overwrite = FALSE)
-}
+# Join cgMLST distance data
+distsnew <- inner_join(df_all_ST, cgmlst_dists, by = c("Sample 1", "Sample 2"))
 
-distsnew <- inner_join(df_all_ST, cgmlst_dists)
+# Combine all source metadata with distances
+dists_w_metadata_all_source <- distsnew %>% as.data.frame()
 
-dists_w_metadata_all_source <- distsnew %>% as.data.frame() 
+# Further filter for SNP distances
+df_all_ST_filtered_SNPs_all <- dists_w_metadata_all_source %>% as.data.frame()
 
-df_all_ST_filtered_SNPs_all <- dists_w_metadata_all_source %>% as.data.frame() 
 ```
 
 ## SNP distances
@@ -371,14 +561,14 @@ df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_
   select(`Sample 1`, `Sample 2`) %>%
   distinct() %>%
   pivot_longer(cols = everything(), values_to = "unique_value") %>%
-  distinct(unique_value) %>% nrow()
+  distinct(unique_value) %>% nrow()  %>% knitr::kable(., align = 'c')
 ```
 
 ```{r}
 ###The SNP distance thresholds were further classified as follows: > 75 and ≤ 100 (n = _/_; _%), > 50 and ≤ 75 (n = _/_; _%), or > 20 and ≤ 50 (n = _/_; _%).
 
 #Compute pairs > 75 ≤ 100 SNPs
-df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 75 & SNPs <= 100) %>% tally()
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 75 & SNPs <= 100) %>% tally()  %>% knitr::kable(., align = 'c')
 
 #Compute percent pairs > 75 ≤ 100 SNPs
 tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 75 & SNPs <= 100) %>% tally() %>% 
@@ -401,7 +591,7 @@ df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_
 
 ```{r}
 #Compute pairs > 50 ≤ 75 SNPs
-df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 50 & SNPs <= 75) %>% tally()
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 50 & SNPs <= 75) %>% tally()  %>% knitr::kable(., align = 'c')
 
 #Compute percent pairs > 50 ≤ 75 SNPs
 tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 50 & SNPs <= 75) %>% tally() %>% 
@@ -426,7 +616,7 @@ df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_
 ```{r}
 
 #Compute pairs > 20 ≤ 50 SNPs
-df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 20 & SNPs <= 50) %>% tally()
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 20 & SNPs <= 50) %>% tally()  %>% knitr::kable(., align = 'c')
 
 #Compute percent pairs > 20 ≤ 50 SNPs
 tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs > 20 & SNPs <= 50) %>% tally() %>% 
@@ -451,7 +641,7 @@ df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_
 ```{r}
 
 #Compute pairs <- 20 SNPs
-df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 20) %>% tally()
+df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 20) %>% tally()  %>% knitr::kable(., align = 'c')
 
 #Compute percent pairs > 20 ≤ 50 SNPs
 tmp <- df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(SNPs <= 20) %>% tally() %>% 
@@ -544,7 +734,9 @@ plot(fit,
 
 
 ```
+
 ## Figure 3 Table for custom annotation
+
 ```{r}
 # Define the breaks and labels for the bins
 breaks <- c(0, 20, 50, 75, 100, 200, 500, 1000, 5000, 7500, Inf)
@@ -698,6 +890,123 @@ knitr::kable(final_table, align = 'c')
 
 ```
 
+## Figure 4
+
+```{r}
+# Function to read and annotate distances with sequence type
+read_and_annotate <- function(file_path, sequence_type) {
+  read_delim(file = file_path, delim = "\t", show_col_types = FALSE) %>%
+    mutate(ST = sequence_type)
+}
+
+# Initialize an empty data frame for distances
+distances2 <- tibble()
+
+# List of sequence types and their respective file paths
+sequence_types <- c("ST131", "ST117", "ST963", "ST69", "ST457", "ST57", "ST648", "ST1193", "ST80", "ST95")
+file_paths <- sprintf("../analysis/SKA/%s_dists/%s_dist_100_SNP.distances.tsv", sequence_types, sequence_types)
+
+# Process each sequence type
+for(i in seq_along(sequence_types)) {
+  distances <- read_and_annotate(file_paths[i], sequence_types[i])
+  distances2 <- bind_rows(distances2, distances)
+}
+
+#Filter out unwanted strains
+distances2 <- distances2 %>% filter(`Sample 1` %in% genometa$name & `Sample 2` %in% genometa$name)
+
+# Process each unique sequence type in distances2
+for(sequence_type in unique(distances2$ST)) {
+  set.seed(1)  # For reproducibility
+
+  # Filter and select distances
+  dists <- distances2 %>%
+    filter(ST == sequence_type, SNPs <= 100) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  # Extract sources from genotypic/metadata table
+  sources <- genometa %>%
+    filter(paste0("ST", ST_new) == sequence_type) %>%
+    select(name, Revised_Source_Niche) %>%
+    mutate(color = case_when(
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
+    ))
+
+  # Create igraph graph from edge list
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  # Assign colors to vertices based on names
+  vertex_color_vector <- sources$color[match(V(g)$name, sources$name)]
+  
+  # Set edge thickness based on SNPs
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3, ifelse(E(g)$SNPs <= 50, 2, 1))
+
+  # Plot graph
+  pdf(file = paste0("../figures/Network_graphs/Network_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  plot(g, edge.width = E(g)$thickness, rescale = TRUE, main = sequence_type, vertex.size = 3, vertex.label = NA, vertex.color = vertex_color_vector)
+  legend("bottomleft",
+         legend = c("Companion Animal", 
+             "Environmental", 
+             "Food", 
+             "Human", 
+             "Livestock", 
+             "Wild Animal"),
+         fill = c(
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  dev.off()
+  
+  # Detect communities
+  clusters_walktrap <- cluster_walktrap(g)
+  
+  # Plot communities
+  pdf(file = paste0("../figures/Network_graphs/Communities_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  plot(clusters_walktrap, g, edge.width = E(g)$thickness, rescale = TRUE, main = sequence_type, vertex.size = 3, vertex.label = NA)
+  dev.off()
+}
+
+```
+
+## Exploring ST95
+
+```{r}
+#Table of cluster distances
+df_all_ST_filtered_SNPs_all %>% filter(ST.x == "ST95") %>% filter(Cluster__autocolour.x == Cluster__autocolour.y) %>% group_by(Cluster__autocolour.x) %>% summarise(minSNPs = min(SNPs), medianSNPs = median(SNPs), maxSNPs = max(SNPs), minAllelicDist = min(value), medianAllelicDist = median(value), maxAllelicDist = max(value), strain_count = n_distinct(c(`Sample 1`, `Sample 2`))) %>% rename("Cluster" = "Cluster__autocolour.x") %>% knitr::kable(., align = 'c')
+
+#Table of cluster distances - only intersource pairs
+df_all_ST_filtered_SNPs_all %>% filter(ST.x == "ST95") %>% filter(Cluster__autocolour.x == Cluster__autocolour.y) %>% filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% group_by(Cluster__autocolour.x) %>% summarise(minSNPs = min(SNPs), medianSNPs = median(SNPs), maxSNPs = max(SNPs), minAllelicDist = min(value), medianAllelicDist = median(value), maxAllelicDist = max(value), strain_count = n_distinct(c(`Sample 1`, `Sample 2`))) %>% rename("Cluster" = "Cluster__autocolour.x") %>% knitr::kable(., align = 'c')
+
+#Plot ST95 network
+plot(g, edge.width = E(g)$thickness, rescale = TRUE, main = sequence_type, vertex.size = 3, vertex.label = NA, vertex.color = vertex_color_vector)
+
+```
+
+## Exploring phylogenetic distance thresholds using cgMLST and SNP-based approaches
+
+```{r}
+#Among 1,948 isolates that reside within these STs, _ exhibited both ≤ 100 SNPs and an allelic distance of ≤ 40. 
+
+both_dists <- distances2 %>% left_join(cgmlst_dists) %>% filter(`Sample 1` %in% genometa$name & `Sample 2` %in% genometa$name)
+
+both_dists %>% group_by(SNPs <= 100 & value <= 40) %>% tally()
+```
+
+
 
 ## Figure 6
 ```{r}
@@ -725,4 +1034,168 @@ df_all_ST_filtered_SNPs_all %>%
         guides(colour = guide_legend(override.aes = list(size=1.5), ncol = 1))
 ```
 
+## Supplementary Material
+
+### Supplementary Table 1
+```{r}
+genometa %>%
+  select(name, ST_new, Revised_Source_Niche, Revised_Source_Type, Intestinal_or_Extraintestinal, Collection, State, Sample_ID, `IncF_RST..IncF RST`) %>%
+  rename('Sample name' = name,
+         'ST (Pending novel allocation)' = ST_new,
+         'Source Niche' = Revised_Source_Niche,
+         'Source Type' = Revised_Source_Type,
+         "Biosample (Pending allocations)" = 'Sample_ID',
+         'IncF RST' = "IncF_RST..IncF RST") %>%
+  write_delim("../Supplementary_Material/Supp_Table_1.tsv", delim = "\t")
+```
+
+Supplementary Figure X
+
+### Supplementary Figures
+```{r}
+
+STs <- df_all_ST_filtered_SNPs_all$ST.x %>% unique()
+
+ST_cols <- paletteer_d("ggthemes::Tableau_10") %>% as.vector()
+
+names(ST_cols) <- STs
+
+
+plot2 <- df_all_ST_filtered_SNPs_all %>% rename("ST" = "ST.x") %>% filter(SNPs < 12000) %>%
+        mutate(fimtyper..Fimtype.x = if_else(is.na(fimtyper..Fimtype.x), "Missing", fimtyper..Fimtype.x)) %>%
+        mutate(fimtyper..Fimtype.y = if_else(is.na(fimtyper..Fimtype.y), "Missing", fimtyper..Fimtype.y)) %>%
+        mutate(same_fim = if_else(fimtyper..Fimtype.x == fimtyper..Fimtype.y, T, F)) %>% 
+        ggplot(aes(x = SNPs, y = value)) + #, color=intra_inter
+        geom_point(aes(color = ST), alpha = I(0.2)) +
+        labs(x = "Pairwise SNP Distance", y = "Pairwise Allelic Distance") +
+        geom_smooth(
+                color = "black",
+                fill = "#69b3a2",
+                se = TRUE
+        ) +
+        stat_cor(method = "spearman", aes(label = paste(..rr.label.., ..p.label.., sep = "~")), color = "red", geom = "label") +
+        scale_color_manual(values = ST_cols)
+
+#ggsave(filename = "../Supplementary_Material/Supplementary_Figure_3A.pdf", plot = plot2, width = 11.69, height = 8.27, units = "in", dpi = 300)
+
+```
+
+```{r}
+plot1 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs < 12000) %>%
+  mutate(fimtyper..Fimtype.x = if_else(is.na(fimtyper..Fimtype.x), "Missing", fimtyper..Fimtype.x)) %>%
+  mutate(fimtyper..Fimtype.y = if_else(is.na(fimtyper..Fimtype.y), "Missing", fimtyper..Fimtype.y)) %>%
+  mutate(same_fim = if_else(fimtyper..Fimtype.x == fimtyper..Fimtype.y, T, F)) %>%
+  rename("Same FimType" = "same_fim") %>%
+        ggplot(aes(x = SNPs, y = value)) + #, color=intra_inter
+        geom_point(aes(color = `Same FimType`)) +
+        facet_wrap(~ST.x) +
+        labs(x = "Pairwise SNP Distance", y = "Pairwise Allelic Distance") +
+        geom_smooth(
+                color = "red",
+                fill = "#69b3a2",
+                se = TRUE
+        ) +
+        stat_cor(method = "spearman", aes(label = paste(..rr.label.., ..p.label.., sep = "~")), color = "red", geom = "label")# +
+
+#ggsave(filename = "../Supplementary_Material/Supplementary_Figure_3B.pdf", plot = plot1, width = 11.69, height = 8.27, units = "in", dpi = 300)
+```
+
+```{r, fig.width=12.6, fig.height=8.7}
+cgMLST_less_equal_40 <- df_all_ST_filtered_SNPs_all %>% filter(value <= 40) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>%
+  pull(unique_value)
+
+SNP_less_equal_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>%
+  select(`Sample 1`, `Sample 2`) %>%
+  distinct() %>%
+  pivot_longer(cols = everything(), values_to = "unique_value") %>%
+  distinct(unique_value) %>%
+  pull(unique_value)
+
+no_SNP_within <- df_all_ST_filtered_SNPs_all %>% filter(value > 40) %>%
+    select(`Sample 1`, `Sample 2`) %>%
+    distinct() %>%
+    pivot_longer(cols = everything(), values_to = "unique_value") %>%
+    distinct(unique_value) %>%
+    pull(unique_value)
+
+no_allelic_within <- df_all_ST_filtered_SNPs_all %>% filter(SNPs > 100) %>%
+    select(`Sample 1`, `Sample 2`) %>%
+    distinct() %>%
+    pivot_longer(cols = everything(), values_to = "unique_value") %>%
+    distinct(unique_value) %>%
+    pull(unique_value)
+
+venn_data <- list("C" = cgMLST_less_equal_40,
+                  "S" = SNP_less_equal_100)
+
+# Generate the Venn diagram
+plot3 <- ggVennDiagram(venn_data) + 
+  theme(legend.position = "none", # Hide legend
+        plot.margin = margin(4, 4, 4, 4, "cm")) +
+  scale_fill_gradient(low = "white", high = "red") # Customize fill gradient
+
+#ggsave(filename = "../Supplementary_Material/Supplementary_Figure_4A.pdf", plot = plot3, width = 11.69, height = 8.27, units = "in", dpi = 300)
+```
+
+```{r, fig.width=12.6, fig.height=8.7}
+cgMLST_less_equal_40 <- df_all_ST_filtered_SNPs_all %>% filter(value <= 40) %>%
+  mutate(name_combo = paste(`Sample 1`, `Sample 2`)) %>%
+  select(name_combo) %>%
+  pull(name_combo) %>%
+  unique()
+
+SNP_less_equal_100 <- df_all_ST_filtered_SNPs_all %>% filter(SNPs <= 100) %>%
+  mutate(name_combo = paste(`Sample 1`, `Sample 2`)) %>%
+  select(name_combo) %>%
+  pull(name_combo) %>%
+  unique()
+
+no_SNP_within <- df_all_ST_filtered_SNPs_all %>% filter(value > 40) %>%
+  mutate(name_combo = paste(`Sample 1`, `Sample 2`)) %>%
+  select(name_combo) %>%
+  pull(name_combo) %>%
+  unique()
+
+no_allelic_within <- df_all_ST_filtered_SNPs_all %>% filter(SNPs > 100) %>%
+  mutate(name_combo = paste(`Sample 1`, `Sample 2`)) %>%
+  select(name_combo) %>%
+  pull(name_combo) %>%
+  unique()
+
+venn_data <- list("C" = cgMLST_less_equal_40,
+                  "S" = SNP_less_equal_100)
+
+# Generate the Venn diagram
+plot4 <- ggVennDiagram(venn_data) + 
+  theme(legend.position = "none", # Hide legend
+        plot.margin = margin(4, 4, 4, 4, "cm")) +
+  scale_fill_gradient(low = "white", high = "red") # Customize fill gradient
+
+#ggsave(filename = "../Supplementary_Material/Supplementary_Figure_4B.pdf", plot = plot4, width = 11.69, height = 8.27, units = "in", dpi = 300)
+```
+
+```{r}
+#Save SNP and allelic distance matrix
+
+#Write allelic distances to file
+cgmlst_dists %>% write_delim("../Supplementary_Material/allelic_distances.txt", delim = "\t")
+
+#Convert long format SNP dists to wide format
+SNP_dists <- df_all_ST_filtered_SNPs_all %>% select(`Sample 1`, `Sample 2`, SNPs)
+SNP_dists <- df_all_ST_filtered_SNPs_all %>% select(`Sample 1`, `Sample 2`, SNPs) %>% rename('tmp' = `Sample 1`) %>% rename(`Sample 1` = `Sample 2`) %>% rename(`Sample 2` = tmp) %>% bind_rows(SNP_dists)
+SNP_dists <- SNP_dists %>% pivot_wider(names_from = 'Sample 2', values_from = "SNPs", values_fill = 0) %>% column_to_rownames('Sample 1') %>% select(rownames(.))
+
+#Write SNP distances to file
+SNP_dists %>% write_delim("../Supplementary_Material/SNP_distances.txt", delim = "\t")
+
+#Generate a long list of SNPs, allelic distance and source
+long_distances_w_source <- df_all_ST_filtered_SNPs_all %>% select(`Sample 1`, `Sample 2`, ST.x, ST.y, SNPs, value, Revised_Source_Niche.x, Revised_Source_Niche.y) %>% rename("Allelic Distance" = value, "Source - Sample 1" = Revised_Source_Niche.x,  "Source - Sample 2" = Revised_Source_Niche.y, "Sequence Type - Sample 1" = ST.x, "Sequence Type - Sample 2" = ST.y)
+
+#Write to file
+long_distances_w_source %>% write_delim("../Supplementary_Material/Pairwise_SNP_and_allelic_distances_with_source.txt", delim = "\t")
+```
 
