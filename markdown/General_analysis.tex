@@ -1,0 +1,1390 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={General Analysis},
+  pdfauthor={Max Cummins},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{General Analysis}
+\author{Max Cummins}
+\date{2024-05-14}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{read-in-our-tree-and-genomic-and-metadata-dataset}{%
+\subsection{Read in our tree and genomic and metadata
+dataset}\label{read-in-our-tree-and-genomic-and-metadata-dataset}}
+
+\hypertarget{compute-general-collection-stats}{%
+\subsection{Compute general collection
+stats}\label{compute-general-collection-stats}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#In total, 5,471 Australian E. coli genomes originating from humans (n=2,992/5,471, 55.13), wild animals (n=858/5,471, 15.81\%), livestock (n=641/5,471, 11.89=1\%), companion animals (n=375/5,471, 6.91\%), environmental sources (n=281/5,471, 5.18\%) and food (302/5,471, 5.16\%) were analysed.}
+\NormalTok{breakdown }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Revised\_Source\_Niche) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort =}\NormalTok{ T)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}}\StringTok{"Total"}\NormalTok{)))}
+
+\NormalTok{breakdown }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 3
+##   Revised_Source_Niche Count Percentage
+##   <chr>                <int> <chr>     
+## 1 Human                 2996 54.76%    
+## 2 Wild Animal            870 15.90%    
+## 3 Livestock              649 11.86%    
+## 4 Companion Animal       375 6.85%     
+## 5 Environmental          292 5.34%     
+## 6 Food                   289 5.28%     
+## 7 Total                 5471 100.00%
+\end{verbatim}
+
+\hypertarget{breakdown-by-year}{%
+\subsection{Breakdown by year}\label{breakdown-by-year}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Collection dates ranged from 1986 to 2022, with 98.3\% (n= 5336/5,471) collected between 2001 and 2022}
+\NormalTok{genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Collection\_Year }\SpecialCharTok{\textgreater{}=} \DecValTok{2001}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3 x 2
+##   `Collection_Year >= 2001`     n
+##   <lgl>                     <int>
+## 1 FALSE                        91
+## 2 TRUE                       5379
+## 3 NA                            1
+\end{verbatim}
+
+\#Source breakdown
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#In total, 1,576 of human sourced samples were sourced from extraintestinal infections, while 974 originate from intestinal sites, and 442 lack the appropriate metadata.  }
+\NormalTok{sources }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Human"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Intestinal\_or\_Extraintestinal) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort=}\NormalTok{T)   }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}}\StringTok{"Total"}\NormalTok{)))}
+
+\NormalTok{sources }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 3
+##   Intestinal_or_Extraintestinal Count Percentage
+##   <chr>                         <int> <chr>     
+## 1 Extraintestinal                1576 52.60%    
+## 2 Intestinal                      976 32.58%    
+## 3 Unknown                         444 14.82%    
+## 4 Total                          2996 100.00%
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Among livestock sourced samples, 48.21\% (n=309/641) originate from extraintestinal sites, while 35.57\% (n=228/641) originate from intestinal sites and 16.22\% (n=104/641) unable to be assigned to either category.}
+\NormalTok{sources }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Livestock"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Intestinal\_or\_Extraintestinal) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort=}\NormalTok{T)   }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}}\StringTok{"Total"}\NormalTok{)))}
+
+\NormalTok{sources }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 4 x 3
+##   Intestinal_or_Extraintestinal Count Percentage
+##   <chr>                         <int> <chr>     
+## 1 Extraintestinal                 311 47.92%    
+## 2 Intestinal                      230 35.44%    
+## 3 Unknown                         108 16.64%    
+## 4 Total                           649 100.00%
+\end{verbatim}
+
+\hypertarget{figure-1}{%
+\subsection{Figure 1}\label{figure-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#We identified 8 sensu stricto phylogroups within the collection, the most frequently identified being B2 which comprised \_\% (n=\_/5,471) of genomes. Phylogroups A, D and B1 were present at comparable frequencies, cumulatively \_\% (n=2,482/5,471) of the collection (individually \_\% [n=\_/5,471], \_\% [n=\_/5,471] and \_\% [n=\_/5,471], respectively). }
+
+\NormalTok{phylogroups }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Consensus\_phylogroup) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort=}\NormalTok{T)   }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}}\StringTok{"Total"}\NormalTok{)))}
+
+\NormalTok{phylogroups }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 14 x 3
+##    Consensus_phylogroup Count Percentage
+##    <chr>                <int> <chr>     
+##  1 B2                    2175 39.76%    
+##  2 A                      955 17.46%    
+##  3 D                      792 14.48%    
+##  4 B1                     701 12.81%    
+##  5 F                      348 6.36%     
+##  6 E                      206 3.77%     
+##  7 G                      154 2.81%     
+##  8 C                      124 2.27%     
+##  9 cladeI                   6 0.11%     
+## 10 E or cladeI              4 0.07%     
+## 11 Unknown                  3 0.05%     
+## 12 cladeIII                 2 0.04%     
+## 13 cladeIV                  1 0.02%     
+## 14 Total                 5471 100.00%
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Most B2 (n=\_/2,240; \_\%) and D (n=\_/803; \_\%) genomes were from humans. While \_\% (n=\_/968) of phylogroup A and \_\% (n=\_/711) of phylogroup B1 genomes were from humans, the majority were sourced from wild animals (A: n=\_/968; B1: n=\_/711), livestock (A: n=\_/968; B1: n=\_/711) and environmental (A: n=\_/968; B1: n=\_/711) sources (Figure 2).}
+
+\NormalTok{phylogroups\_by\_Source }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Consensus\_phylogroup, Revised\_Source\_Niche) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort=}\NormalTok{T)   }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}}\StringTok{"Total"}\NormalTok{)))}
+
+\NormalTok{phylogroups\_by\_Source }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{arrange}\NormalTok{(Consensus\_phylogroup, }\FunctionTok{desc}\NormalTok{(Count))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 70 x 4
+## # Groups:   Consensus_phylogroup [13]
+##    Consensus_phylogroup Revised_Source_Niche Count Percentage
+##    <chr>                <chr>                <int> <chr>     
+##  1 A                    Total                  955 100.00%   
+##  2 A                    Human                  346 36.23%    
+##  3 A                    Livestock              231 24.19%    
+##  4 A                    Wild Animal            224 23.46%    
+##  5 A                    Environmental           68 7.12%     
+##  6 A                    Food                    66 6.91%     
+##  7 A                    Companion Animal        20 2.09%     
+##  8 B1                   Total                  701 100.00%   
+##  9 B1                   Wild Animal            213 30.39%    
+## 10 B1                   Human                  178 25.39%    
+## # i 60 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#In total, \_ STs were identified, of which \_ were known and \_ were novel (exhibited novel alleles or novel combinations of known alleles)}
+
+\NormalTok{STs }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(ST\_new) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{(}\AttributeTok{sort=}\NormalTok{T)}
+
+\NormalTok{STs }\OtherTok{\textless{}{-}}\NormalTok{ STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Novel =} \FunctionTok{if\_else}\NormalTok{(}\FunctionTok{str\_detect}\NormalTok{(ST\_new, }\StringTok{"\^{}[\^{}0{-}9]"}\NormalTok{), }\StringTok{"Yes"}\NormalTok{, }\StringTok{"No"}\NormalTok{))}
+
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Novel) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   Novel     n
+##   <chr> <int>
+## 1 No      744
+## 2 Yes      94
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#The collection was phylogenetically diverse (Figure 2) but predominantly comprised of a small number of STs; while we identified \_ singleton STs, the top thirty STs comprised \_\% (n=\_ /5,471) of the collection. We also identified \_ novel STs (Supplementary Table 1).}
+
+\CommentTok{\#Singletons}
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Count }\SpecialCharTok{==} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `Count == 1`     n
+##   <lgl>        <int>
+## 1 FALSE          363
+## 2 TRUE           475
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Top 30 STs}
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{head}\NormalTok{(}\DecValTok{30}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(Count) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{sum}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3372
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{head}\NormalTok{(}\DecValTok{30}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(Count) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{sum}\NormalTok{()}\SpecialCharTok{/}\DecValTok{5471}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.6163407
+\end{verbatim}
+
+\hypertarget{define-our-source-and-phylogroup-colours}{%
+\subsection{Define our source and phylogroup
+colours}\label{define-our-source-and-phylogroup-colours}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Overwrite with different colours}
+\NormalTok{source\_cols }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Companion Animal"} \OtherTok{=} \StringTok{"\#59398d"}\NormalTok{,}
+         \StringTok{"Environmental"} \OtherTok{=} \StringTok{"\#709b46"}\NormalTok{,}
+         \StringTok{"Food"} \OtherTok{=} \StringTok{"\#c09f3d"}\NormalTok{,}
+         \StringTok{"Human"} \OtherTok{=} \StringTok{"\#48c595"}\NormalTok{,}
+         \StringTok{"Livestock"} \OtherTok{=}  \StringTok{"\#c26bbc"}\NormalTok{,}
+         \StringTok{"Wild Animal"} \OtherTok{=} \StringTok{"\#b9553d"}\NormalTok{)}
+
+\CommentTok{\#Define our colours for our phylogroups}
+\NormalTok{clermont\_cols }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}\#ffe119\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#4363d8\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#f58231\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#dcbeff\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#800000\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#000075\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#9A6324\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#3cb44b\textquotesingle{}}\NormalTok{,  }\StringTok{\textquotesingle{}white\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}\#a9a9a9\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\#Assign our color names for phylogroups}
+\FunctionTok{names}\NormalTok{(clermont\_cols) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{, }\StringTok{"B1"}\NormalTok{,  }\StringTok{"B2"}\NormalTok{, }\StringTok{"C"}\NormalTok{, }\StringTok{"D"}\NormalTok{, }\StringTok{"E"}\NormalTok{, }\StringTok{"F"}\NormalTok{, }\StringTok{"G"}\NormalTok{, }\StringTok{"E or cladeI"}\NormalTok{, }\StringTok{"cladeI"}\NormalTok{, }\StringTok{"cladeIII"}\NormalTok{, }\StringTok{"cladeIV"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{figure-2---part-a}{%
+\section{Figure 2 - Part A}\label{figure-2---part-a}}
+
+\begin{verbatim}
+## ! The tree contained negative edge lengths. If you want to ignore the edges,
+## you can set `options(ignore.negative.edge=TRUE)`, then re-run ggtree.
+\end{verbatim}
+
+\begin{verbatim}
+## Scale for fill is already present.
+## Adding another scale for fill, which will replace the existing scale.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values or values outside the scale range
+## (`geom_text()`).
+\end{verbatim}
+
+\includegraphics{General_analysis_files/figure-latex/Part A-1.pdf}
+
+\hypertarget{figure-2---part-b}{%
+\subsection{Figure 2 - Part B}\label{figure-2---part-b}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Prepare the data by counting occurrences}
+\NormalTok{data\_summary }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(Revised\_Source\_Niche, Consensus\_phylogroup) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Consensus\_phylogroup =} \FunctionTok{as.factor}\NormalTok{(}\FunctionTok{rev}\NormalTok{(}\FunctionTok{sort}\NormalTok{(Consensus\_phylogroup)))) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{Count =} \FunctionTok{n}\NormalTok{(), }\AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Create the plot}
+\FunctionTok{ggplot}\NormalTok{(data\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Revised\_Source\_Niche, }\AttributeTok{y =}\NormalTok{ Count, }\AttributeTok{fill =}\NormalTok{ Consensus\_phylogroup)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}  \CommentTok{\# Flips the axes to match the original plot\textquotesingle{}s orientation}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}  \CommentTok{\# Converts y{-}axis into percentage}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}  \CommentTok{\# Optional: Clean minimalistic theme}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Source Niche"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Percentage"}\NormalTok{, }\AttributeTok{fill =} \StringTok{"Phylogroup"}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Labeling axes and legend}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =}\NormalTok{ clermont\_cols)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{General_analysis_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\hypertarget{figure-2---part-c}{%
+\subsection{Figure 2 - Part C}\label{figure-2---part-c}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Prepare the data by counting occurrences}
+\NormalTok{data\_summary }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ST\_other =} \FunctionTok{fct\_lump\_n}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"ST"}\NormalTok{,ST\_new), }\DecValTok{10}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(ST\_other, Revised\_Source\_Niche) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{Count =} \FunctionTok{n}\NormalTok{(), }\AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Create the plot}
+\FunctionTok{ggplot}\NormalTok{(data\_summary, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ ST\_other, }\AttributeTok{y =}\NormalTok{ Count, }\AttributeTok{fill =}\NormalTok{ Revised\_Source\_Niche)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}  \CommentTok{\# Flips the axes to match the original plot\textquotesingle{}s orientation}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}  \CommentTok{\# Converts y{-}axis into percentage}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}  \CommentTok{\# Optional: Clean minimalistic theme}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Source Niche"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Percentage"}\NormalTok{, }\AttributeTok{fill =} \StringTok{"Phylogroup"}\NormalTok{) }\SpecialCharTok{+}  \CommentTok{\# Labeling axes and legend}
+  \FunctionTok{scale\_fill\_manual}\NormalTok{(}\AttributeTok{values =}\NormalTok{ source\_cols)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{General_analysis_files/figure-latex/unnamed-chunk-12-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#In total, \_ isolates (comprising \_ isolate pairs) were identified as putative clusters; the remaining \_ isolates exceeded this distance from any other isolate in the collection. }
+\NormalTok{cgmlst\_dists }\OtherTok{\textless{}{-}} \FunctionTok{vroom}\NormalTok{(}\StringTok{"../analysis/cgMLST\_dists\_5471.txt"}\NormalTok{, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{cgmlst\_dists }\OtherTok{\textless{}{-}}\NormalTok{ cgmlst\_dists }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}
+    \AttributeTok{cols =} \DecValTok{2}\SpecialCharTok{:}\FunctionTok{ncol}\NormalTok{(cgmlst\_dists),  }\CommentTok{\# Ensure this references the correct data frame}
+    \AttributeTok{names\_to =} \StringTok{"Sample 2"}\NormalTok{,}
+    \AttributeTok{values\_to =} \StringTok{"value"}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Sample 1\textquotesingle{}} \OtherTok{=} \StringTok{\textasciigrave{}}\AttributeTok{5471}\StringTok{\textasciigrave{}}\NormalTok{)}
+
+\NormalTok{cgmlst\_dists }\OtherTok{\textless{}{-}}\NormalTok{ cgmlst\_dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{!=} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{)}
+
+\NormalTok{cgmlst\_dists }\OtherTok{\textless{}{-}}\NormalTok{ cgmlst\_dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ tree}\SpecialCharTok{$}\NormalTok{tip.label }\SpecialCharTok{\&} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ tree}\SpecialCharTok{$}\NormalTok{tip.label)}
+
+\CommentTok{\#Isolate pairs}
+\NormalTok{cgmlst\_dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(value }\SpecialCharTok{\textless{}=} \DecValTok{40}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 151994
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Isolate count}
+\NormalTok{cgmlst\_dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(value }\SpecialCharTok{\textless{}=} \DecValTok{40}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3465
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Isolates with STs 131, 963, 1193, 95, 69, 80, 117, 457, 648 and 57 comprised \_\% (n=\_/5,471) of the overall collection (Figure 2 C). }
+\CommentTok{\#Count}
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(ST\_new }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\DecValTok{131}\NormalTok{, }\DecValTok{963}\NormalTok{, }\DecValTok{1193}\NormalTok{, }\DecValTok{95}\NormalTok{, }\DecValTok{69}\NormalTok{, }\DecValTok{80}\NormalTok{, }\DecValTok{117}\NormalTok{, }\DecValTok{457}\NormalTok{, }\DecValTok{648}\NormalTok{, }\DecValTok{57}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(Count) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{sum}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1948
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Perc}
+\NormalTok{STs }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(ST\_new }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\DecValTok{131}\NormalTok{, }\DecValTok{963}\NormalTok{, }\DecValTok{1193}\NormalTok{, }\DecValTok{95}\NormalTok{, }\DecValTok{69}\NormalTok{, }\DecValTok{80}\NormalTok{, }\DecValTok{117}\NormalTok{, }\DecValTok{457}\NormalTok{, }\DecValTok{648}\NormalTok{, }\DecValTok{57}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pull}\NormalTok{(Count) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{sum}\NormalTok{()}\SpecialCharTok{/}\DecValTok{5471}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.3560592
+\end{verbatim}
+
+\hypertarget{data-setup-for-snp-distances}{%
+\subsection{Data setup for SNP
+distances}\label{data-setup-for-snp-distances}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df\_all\_ST }\OtherTok{=} \FunctionTok{data.frame}\NormalTok{()}
+
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \FunctionTok{list.dirs}\NormalTok{(}\StringTok{"../analysis/SKA"}\NormalTok{))\{}
+        \ControlFlowTok{if}\NormalTok{(}\FunctionTok{str\_detect}\NormalTok{(}\AttributeTok{string =}\NormalTok{ i, }\AttributeTok{pattern =} \StringTok{"\_dists"}\NormalTok{))\{}
+                \CommentTok{\#ST extraction}
+\NormalTok{                ST }\OtherTok{\textless{}{-}} \FunctionTok{gsub}\NormalTok{(}\StringTok{"\_dists"}\NormalTok{, }\StringTok{""}\NormalTok{, }\FunctionTok{basename}\NormalTok{(i))}
+                \CommentTok{\#Read in SNP distances}
+\NormalTok{                dists }\OtherTok{\textless{}{-}} \FunctionTok{read\_delim}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(i,}\StringTok{"/"}\NormalTok{,ST,}\StringTok{"\_dist\_100\_SNP.distances.tsv"}\NormalTok{), }
+                    \AttributeTok{delim =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{escape\_double =} \ConstantTok{FALSE}\NormalTok{, }
+                    \AttributeTok{trim\_ws =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)}
+                
+                \CommentTok{\#Read in SNP Clusters}
+\NormalTok{                clusts }\OtherTok{\textless{}{-}} \FunctionTok{read\_delim}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(i,}\StringTok{"/"}\NormalTok{,ST,}\StringTok{"\_dist\_100\_SNP.clusters.tsv"}\NormalTok{), }
+                    \AttributeTok{delim =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{escape\_double =} \ConstantTok{FALSE}\NormalTok{, }
+                    \AttributeTok{trim\_ws =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)}
+                
+                
+                \CommentTok{\#Combine our metadata and our clusters for use in microreact}
+\NormalTok{                data\_microreact }\OtherTok{\textless{}{-}} \FunctionTok{left\_join}\NormalTok{(clusts, genometa, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"ID"} \OtherTok{=}\StringTok{"name"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(ID, }\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"Revised\_Source"}\NormalTok{), Collection\_Year, Collection, fimtyper..Fimtype, ColV, Cluster\_\_autocolour)}
+                
+\NormalTok{                data\_microreact1 }\OtherTok{\textless{}{-}}\NormalTok{ data\_microreact }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample 1"} \OtherTok{=} \StringTok{"ID"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rev}\NormalTok{()}
+                
+\NormalTok{                data\_microreact2 }\OtherTok{\textless{}{-}}\NormalTok{ data\_microreact }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample 2"} \OtherTok{=} \StringTok{"ID"}\NormalTok{)}
+                
+\NormalTok{                dists2 }\OtherTok{\textless{}{-}} \FunctionTok{inner\_join}\NormalTok{(data\_microreact1, dists, }\AttributeTok{by =} \StringTok{"Sample 1"}\NormalTok{)}
+                
+\NormalTok{                dists2 }\OtherTok{\textless{}{-}} \FunctionTok{inner\_join}\NormalTok{(dists2, data\_microreact2, }\AttributeTok{by =} \StringTok{"Sample 2"}\NormalTok{)}
+                
+\NormalTok{                dists2 }\OtherTok{\textless{}{-}}\NormalTok{ dists2 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.factor), as.character))}
+                
+\NormalTok{                dists\_w\_metadata }\OtherTok{\textless{}{-}}\NormalTok{ dists2 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rowwise}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{col1 =} \FunctionTok{pmin}\NormalTok{(Revised\_Source\_Niche.x, Revised\_Source\_Niche.y), }\AttributeTok{col2 =} \FunctionTok{pmax}\NormalTok{(Revised\_Source\_Niche.x, Revised\_Source\_Niche.y), }\AttributeTok{source\_combo =} \FunctionTok{paste0}\NormalTok{(col1, }\StringTok{"/"}\NormalTok{,col2, }\AttributeTok{collapse =} \StringTok{""}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{col1, }\SpecialCharTok{{-}}\NormalTok{col2)}
+                
+\NormalTok{                dists\_w\_metadata }\OtherTok{\textless{}{-}}\NormalTok{ dists\_w\_metadata }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rowwise}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+                        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{col1 =} \FunctionTok{pmin}\NormalTok{(Revised\_Source\_Type.x, Revised\_Source\_Type.y), }\AttributeTok{col2 =} \FunctionTok{pmax}\NormalTok{(Revised\_Source\_Type.x, Revised\_Source\_Type.y), }\AttributeTok{source\_type\_combo =} \FunctionTok{paste0}\NormalTok{(col1, }\StringTok{"/"}\NormalTok{,col2, }\AttributeTok{collapse =} \StringTok{""}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{col1, }\SpecialCharTok{{-}}\NormalTok{col2)}
+                
+\NormalTok{                dists\_w\_metadata}\SpecialCharTok{$}\NormalTok{ST.x }\OtherTok{\textless{}{-}}\NormalTok{ ST}
+                
+\NormalTok{                dists\_w\_metadata}\SpecialCharTok{$}\NormalTok{ST.y }\OtherTok{\textless{}{-}}\NormalTok{ ST}
+                
+\NormalTok{                df\_all\_ST }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(df\_all\_ST, dists\_w\_metadata)}
+                
+               \CommentTok{\# write\_delim(x = data\_microreact1, file = paste0(i,"/",ST,"\_metadata\_microreact.tsv"), delim = "\textbackslash{}t")}
+\NormalTok{        \}}
+        
+\NormalTok{\}}
+
+\NormalTok{df\_all\_ST }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as.data.frame}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ tree}\SpecialCharTok{$}\NormalTok{tip.label }\SpecialCharTok{\&} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ tree}\SpecialCharTok{$}\NormalTok{tip.label)}
+
+\NormalTok{dists\_w\_metadata\_x\_source }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as.data.frame}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y)}
+
+\NormalTok{cgMLST\_clusters }\OtherTok{\textless{}{-}} \FunctionTok{read\_delim}\NormalTok{(}\AttributeTok{file =} \StringTok{"../analysis/clusters.txt"}\NormalTok{, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: One or more parsing issues, call `problems()` on your data frame for details,
+## e.g.:
+##   dat <- vroom(...)
+##   problems(dat)
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{file.exists}\NormalTok{(}\StringTok{"../analysis/cgMLST\_dists\_5471.txt"}\NormalTok{))\{}
+  \FunctionTok{unzip}\NormalTok{(}\AttributeTok{exdir =} \StringTok{"../analysis"}\NormalTok{, }\AttributeTok{zipfile =} \StringTok{"../analysis/cgMLST\_dists\_5471.txt.zip"}\NormalTok{, }\AttributeTok{overwrite =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{\}}
+
+\NormalTok{distsnew }\OtherTok{\textless{}{-}} \FunctionTok{inner\_join}\NormalTok{(df\_all\_ST, cgmlst\_dists)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining with `by = join_by(`Sample 1`, `Sample 2`)`
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dists\_w\_metadata\_all\_source }\OtherTok{\textless{}{-}}\NormalTok{ distsnew }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as.data.frame}\NormalTok{() }
+
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\OtherTok{\textless{}{-}}\NormalTok{ dists\_w\_metadata\_all\_source }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{as.data.frame}\NormalTok{() }
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{snp-distances}{%
+\subsection{SNP distances}\label{snp-distances}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\#\#Of the \_ cross{-}source pairs under analysis, \_ (\_\%) exhibited SNP distances ≤ 100 SNPs}
+
+\CommentTok{\#Compute pairs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 92072
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strains}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1948
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute pairs ≤ 100 SNPs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs <= 100`     n
+##   <lgl>         <int>
+## 1 FALSE         89629
+## 2 TRUE           2443
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute percent pairs ≤ 100 SNPs}
+\NormalTok{tmp }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \ConstantTok{TRUE} \SpecialCharTok{|} \ConstantTok{FALSE}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}\CommentTok{\# \%\textgreater{}\% arrange(Consensus\_phylogroup, desc(Count))}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(tmp, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+SNPs \textless= 100 & Count & Percentage \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FALSE & 89629 & 97.35\% \\
+TRUE & 2443 & 2.65\% \\
+NA & 92072 & 100.00\% \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strain count}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 541
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\#\#The SNP distance thresholds were further classified as follows: \textgreater{} 75 and ≤ 100 (n = \_/\_; \_\%), \textgreater{} 50 and ≤ 75 (n = \_/\_; \_\%), or \textgreater{} 20 and ≤ 50 (n = \_/\_; \_\%).}
+
+\CommentTok{\#Compute pairs \textgreater{} 75 ≤ 100 SNPs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{75} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs > 75 & SNPs <= 100`     n
+##   <lgl>                     <int>
+## 1 FALSE                     91058
+## 2 TRUE                       1014
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute percent pairs \textgreater{} 75 ≤ 100 SNPs}
+\NormalTok{tmp }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{75} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \ConstantTok{TRUE} \SpecialCharTok{|} \ConstantTok{FALSE}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}\CommentTok{\# \%\textgreater{}\% arrange(Consensus\_phylogroup, desc(Count))}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(tmp, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+SNPs \textgreater{} 75 \& SNPs \textless= 100 & Count & Percentage \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FALSE & 91058 & 98.90\% \\
+TRUE & 1014 & 1.10\% \\
+NA & 92072 & 100.00\% \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strain count}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{75} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 474
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute pairs \textgreater{} 50 ≤ 75 SNPs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{50} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{75}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs > 50 & SNPs <= 75`     n
+##   <lgl>                    <int>
+## 1 FALSE                    91067
+## 2 TRUE                      1005
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute percent pairs \textgreater{} 50 ≤ 75 SNPs}
+\NormalTok{tmp }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{50} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{75}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \ConstantTok{TRUE} \SpecialCharTok{|} \ConstantTok{FALSE}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}\CommentTok{\# \%\textgreater{}\% arrange(Consensus\_phylogroup, desc(Count))}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(tmp, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+SNPs \textgreater{} 50 \& SNPs \textless= 75 & Count & Percentage \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FALSE & 91067 & 98.91\% \\
+TRUE & 1005 & 1.09\% \\
+NA & 92072 & 100.00\% \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strain count}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{50} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{75}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 329
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute pairs \textgreater{} 20 ≤ 50 SNPs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{20} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{50}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs > 20 & SNPs <= 50`     n
+##   <lgl>                    <int>
+## 1 FALSE                    91651
+## 2 TRUE                       421
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute percent pairs \textgreater{} 20 ≤ 50 SNPs}
+\NormalTok{tmp }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{20} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{50}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \ConstantTok{TRUE} \SpecialCharTok{|} \ConstantTok{FALSE}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}\CommentTok{\# \%\textgreater{}\% arrange(Consensus\_phylogroup, desc(Count))}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(tmp, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+SNPs \textgreater{} 20 \& SNPs \textless= 50 & Count & Percentage \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FALSE & 91651 & 99.54\% \\
+TRUE & 421 & 0.46\% \\
+NA & 92072 & 100.00\% \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strain count}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textgreater{}} \DecValTok{20} \SpecialCharTok{\&}\NormalTok{ SNPs }\SpecialCharTok{\textless{}=} \DecValTok{50}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 136
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute pairs \textless{}{-} 20 SNPs}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{20}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs <= 20`     n
+##   <lgl>        <int>
+## 1 FALSE        92069
+## 2 TRUE             3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute percent pairs \textgreater{} 20 ≤ 50 SNPs}
+\NormalTok{tmp }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{20}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \ConstantTok{TRUE} \SpecialCharTok{|} \ConstantTok{FALSE}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(n}\SpecialCharTok{/}\FunctionTok{max}\NormalTok{(n), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Count\textquotesingle{}} \OtherTok{=}\NormalTok{ n)}\CommentTok{\# \%\textgreater{}\% arrange(Consensus\_phylogroup, desc(Count))}
+
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(tmp, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ccc@{}}
+\toprule\noalign{}
+SNPs \textless= 20 & Count & Percentage \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FALSE & 92069 & 100.00\% \\
+TRUE & 3 & 0.00\% \\
+NA & 92072 & 100.00\% \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Compute strain count}
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{20}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{nrow}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 5
+\end{verbatim}
+
+\hypertarget{figure-3}{%
+\subsection{Figure 3}\label{figure-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Load necessary libraries}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(eulerr)}
+
+\CommentTok{\# Set seed for reproducibility}
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{5}\NormalTok{)}
+
+\CommentTok{\# Define a function to filter and process intersource data}
+\NormalTok{process\_intersource\_data }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(df, snp\_threshold) \{}
+\NormalTok{  df }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=}\NormalTok{ snp\_threshold) }\SpecialCharTok{\%\textgreater{}\%}                    \CommentTok{\# Filter SNPs based on threshold}
+    \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{!=} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                 \CommentTok{\# Exclude rows where Sample 1 equals Sample 2}
+    \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Filter different source niches}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{col1 =} \FunctionTok{pmin}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{),          }\CommentTok{\# Get the minimum of Sample 1 and Sample 2}
+           \AttributeTok{col2 =} \FunctionTok{pmax}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}      \CommentTok{\# Get the maximum of Sample 1 and Sample 2}
+    \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                        \CommentTok{\# Ungroup the dataframe}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{name\_combo =} \FunctionTok{paste0}\NormalTok{(col1, }\StringTok{"/"}\NormalTok{, col2)) }\SpecialCharTok{\%\textgreater{}\%}     \CommentTok{\# Create combination name}
+    \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{col1, }\SpecialCharTok{{-}}\NormalTok{col2)                                 }\CommentTok{\# Drop col1 and col2}
+\NormalTok{\}}
+
+\CommentTok{\# Process intersource data for different SNP thresholds}
+\NormalTok{intersource\_less\_20 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{20}\NormalTok{)}
+\NormalTok{intersource\_less\_50 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{50}\NormalTok{)}
+\NormalTok{intersource\_less\_75 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{75}\NormalTok{)}
+\NormalTok{intersource\_less\_100 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{100}\NormalTok{)}
+\NormalTok{intersource\_less\_200 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{200}\NormalTok{)}
+\NormalTok{intersource\_less\_500 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{500}\NormalTok{)}
+\NormalTok{intersource\_less\_1000 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{1000}\NormalTok{)}
+\NormalTok{intersource\_less\_2500 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{2500}\NormalTok{)}
+\NormalTok{intersource\_less\_5000 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{5000}\NormalTok{)}
+\NormalTok{intersource\_less\_7500 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{7500}\NormalTok{)}
+\NormalTok{intersource\_less\_10000 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{10000}\NormalTok{)}
+\NormalTok{intersource\_total\_11350 }\OtherTok{\textless{}{-}} \FunctionTok{process\_intersource\_data}\NormalTok{(df\_all\_ST\_filtered\_SNPs\_all, }\DecValTok{11350}\NormalTok{)}
+
+\CommentTok{\# Create a list of sets for Euler diagram}
+\NormalTok{sets }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \StringTok{\textquotesingle{}20\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_20}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}50\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_50}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}75\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_75}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}100\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_100}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}200\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_200}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}500\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_500}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}1000\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_1000}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}2500\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_2500}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}5000\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_5000}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}7500\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_less\_7500}\SpecialCharTok{$}\NormalTok{name\_combo,}
+  \StringTok{\textquotesingle{}11,350\textquotesingle{}} \OtherTok{=}\NormalTok{ intersource\_total\_11350}\SpecialCharTok{$}\NormalTok{name\_combo}
+\NormalTok{)}
+
+\CommentTok{\# Generate and plot the Euler diagram}
+\NormalTok{fit }\OtherTok{\textless{}{-}} \FunctionTok{euler}\NormalTok{(sets)}
+\FunctionTok{plot}\NormalTok{(fit,}
+     \AttributeTok{quantities =} \ConstantTok{TRUE}\NormalTok{,}
+     \AttributeTok{lty =} \FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{),         }\CommentTok{\# Line types}
+     \AttributeTok{fills =} \FunctionTok{rev}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"\#FFFFF0"}\NormalTok{,                           }\CommentTok{\# Colors for the fills}
+                   \StringTok{"grey24"}\NormalTok{,}
+                   \StringTok{"grey36"}\NormalTok{,}
+                   \StringTok{"grey48"}\NormalTok{,}
+                   \StringTok{"grey60"}\NormalTok{,}
+                   \StringTok{"grey72"}\NormalTok{,}
+                   \StringTok{"grey84"}\NormalTok{,}
+                   \StringTok{"\#FF6A6A"}\NormalTok{,}
+                   \StringTok{"\#FFA500"}\NormalTok{,}
+                   \StringTok{"\#FFFF00"}\NormalTok{,}
+                   \StringTok{"\#FFFFF0"}\NormalTok{))}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{General_analysis_files/figure-latex/unnamed-chunk-22-1.pdf}
+\#\# Figure 3 Table for custom annotation
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define the breaks and labels for the bins}
+\NormalTok{breaks }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{20}\NormalTok{, }\DecValTok{50}\NormalTok{, }\DecValTok{75}\NormalTok{, }\DecValTok{100}\NormalTok{, }\DecValTok{200}\NormalTok{, }\DecValTok{500}\NormalTok{, }\DecValTok{1000}\NormalTok{, }\DecValTok{5000}\NormalTok{, }\DecValTok{7500}\NormalTok{, }\ConstantTok{Inf}\NormalTok{)}
+\NormalTok{labels }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"0{-}20"}\NormalTok{, }\StringTok{"21{-}50"}\NormalTok{, }\StringTok{"51{-}75"}\NormalTok{, }\StringTok{"76{-}100"}\NormalTok{, }\StringTok{"101{-}200"}\NormalTok{, }\StringTok{"201{-}500"}\NormalTok{, }\StringTok{"501{-}1000"}\NormalTok{, }\StringTok{"1001{-}5000"}\NormalTok{, }\StringTok{"5001{-}7500"}\NormalTok{, }\StringTok{"7500+"}\NormalTok{)}
+
+\CommentTok{\# Bin the data}
+\NormalTok{binned\_SNPs }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{, SNPs) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Bin =} \FunctionTok{cut}\NormalTok{(SNPs, }\AttributeTok{breaks =}\NormalTok{ breaks, }\AttributeTok{labels =}\NormalTok{ labels, }\AttributeTok{right =} \ConstantTok{FALSE}\NormalTok{))}
+
+\CommentTok{\#Summarize the data by bin}
+\NormalTok{summary }\OtherTok{\textless{}{-}}\NormalTok{ binned\_SNPs }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(Bin) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{Count =} \FunctionTok{n}\NormalTok{(), }\AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\#Add percentages}
+\NormalTok{summary }\OtherTok{\textless{}{-}}\NormalTok{ summary }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent}\NormalTok{(Count}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(summary}\SpecialCharTok{$}\NormalTok{Count), }\AttributeTok{accuracy =} \FloatTok{0.01}\NormalTok{))}
+
+\CommentTok{\#Create aggregating column for labels}
+\NormalTok{summary}\OtherTok{\textless{}{-}}\NormalTok{ summary }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{mutate}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(Bin, }\StringTok{" SNPs (n="}\NormalTok{,Count,}\StringTok{"/"}\NormalTok{, }\FunctionTok{sum}\NormalTok{(summary}\SpecialCharTok{$}\NormalTok{Count), }\StringTok{"; "}\NormalTok{, Percentage, }\StringTok{")"}\NormalTok{))}
+
+\CommentTok{\# View summary}
+
+\CommentTok{\# Display the final table}
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(summary, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1571}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1000}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1714}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5714}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+Bin
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Count
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Percentage
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+label
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0-20 & 3 & 0.00\% & 0-20 SNPs (n=3/92072; 0.00\%) \\
+21-50 & 393 & 0.43\% & 21-50 SNPs (n=393/92072; 0.43\%) \\
+51-75 & 984 & 1.07\% & 51-75 SNPs (n=984/92072; 1.07\%) \\
+76-100 & 1025 & 1.11\% & 76-100 SNPs (n=1025/92072; 1.11\%) \\
+101-200 & 4340 & 4.71\% & 101-200 SNPs (n=4340/92072; 4.71\%) \\
+201-500 & 10482 & 11.38\% & 201-500 SNPs (n=10482/92072; 11.38\%) \\
+501-1000 & 13037 & 14.16\% & 501-1000 SNPs (n=13037/92072; 14.16\%) \\
+1001-5000 & 45006 & 48.88\% & 1001-5000 SNPs (n=45006/92072; 48.88\%) \\
+5001-7500 & 16231 & 17.63\% & 5001-7500 SNPs (n=16231/92072; 17.63\%) \\
+7500+ & 571 & 0.62\% & 7500+ SNPs (n=571/92072; 0.62\%) \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#The top 10 STs linked to putative clusters (as per cgMLST analyses) comprised \_ isolates, \_ of which were no closer than 100 SNPs from any other isolates under analysis. From the remaining \_ isolates \_ clusters emerged, each comprising two or more isolates differing by ≤ 100 SNPs. Of these, \_ comprised cross{-}source clusters, (cluster sizes: min = \_, median = \_, max = \_) and \_ comprised mono{-}source clusters (cluster sizes: min = \_, median = \_, max = \_). }
+
+\CommentTok{\# Load necessary libraries}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(tidyr)}
+
+\CommentTok{\# Create base\_table with unique values for each ST.x}
+\NormalTok{base\_table }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(ST.x) }\SpecialCharTok{\%\textgreater{}\%}                            \CommentTok{\# Group by ST.x}
+  \FunctionTok{select}\NormalTok{(ST.x, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}            \CommentTok{\# Select the Sample 1 and Sample 2 columns}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                \CommentTok{\# Remove duplicate rows}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{c}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Pivot longer to create a single column of unique values}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{name) }\SpecialCharTok{\%\textgreater{}\%}                             \CommentTok{\# Remove the temporary \textquotesingle{}name\textquotesingle{} column created by pivot\_longer}
+  \FunctionTok{unique}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                  \CommentTok{\# Keep only unique rows}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%}                    \CommentTok{\# Keep distinct unique values}
+  \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                   \CommentTok{\# Count the number of unique values}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Count of ST"} \OtherTok{=}\NormalTok{ n) }\SpecialCharTok{\%\textgreater{}\%}                 \CommentTok{\# Rename our column}
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,                        }\CommentTok{\# Add a row for total}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \StringTok{"Total"}\NormalTok{)))}
+
+\CommentTok{\# Create count\_of\_clustered\_samples with SNPs less than 100}
+\NormalTok{count\_of\_clustered\_samples }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(SNPs }\SpecialCharTok{\textless{}} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                        \CommentTok{\# Filter rows where SNPs are less than 100}
+  \FunctionTok{group\_by}\NormalTok{(ST.x) }\SpecialCharTok{\%\textgreater{}\%}                            \CommentTok{\# Group by ST.x}
+  \FunctionTok{select}\NormalTok{(ST.x, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}            \CommentTok{\# Select the Sample 1 and Sample 2 columns}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                \CommentTok{\# Remove duplicate rows}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{c}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{), }\AttributeTok{values\_to =} \StringTok{"unique\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Pivot longer to create a single column of unique values}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{name) }\SpecialCharTok{\%\textgreater{}\%}                             \CommentTok{\# Remove the temporary \textquotesingle{}name\textquotesingle{} column created by pivot\_longer}
+  \FunctionTok{unique}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                  \CommentTok{\# Keep only unique rows}
+  \FunctionTok{distinct}\NormalTok{(unique\_value) }\SpecialCharTok{\%\textgreater{}\%}                    \CommentTok{\# Keep distinct unique values}
+  \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                   \CommentTok{\# Count the number of unique values}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Count of Clustered Samples"} \OtherTok{=}\NormalTok{ n)  }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Rename our column}
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,                        }\CommentTok{\# Add a row for total}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \StringTok{"Total"}\NormalTok{)))}
+
+\CommentTok{\# Create clusters with Sample 1}
+\NormalTok{clusters\_1 }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, ST.x, Cluster\_\_autocolour.x, Revised\_Source\_Niche.x) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Select relevant columns}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample"} \OtherTok{=} \StringTok{"Sample 1"}\NormalTok{,                }\CommentTok{\# Rename columns for consistency}
+         \StringTok{"Cluster"} \OtherTok{=} \StringTok{"Cluster\_\_autocolour.x"}\NormalTok{, }
+         \StringTok{"Revised\_Source\_Niche"} \OtherTok{=} \StringTok{"Revised\_Source\_Niche.x"}\NormalTok{)}
+
+\CommentTok{\# Create clusters with Sample 2 and combine with clusters\_1}
+\NormalTok{clusters\_2 }\OtherTok{\textless{}{-}}\NormalTok{ df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{, ST.x, Cluster\_\_autocolour.y, Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Select relevant columns}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample"} \OtherTok{=} \StringTok{"Sample 2"}\NormalTok{,                }\CommentTok{\# Rename columns for consistency}
+         \StringTok{"Cluster"} \OtherTok{=} \StringTok{"Cluster\_\_autocolour.y"}\NormalTok{, }
+         \StringTok{"Revised\_Source\_Niche"} \OtherTok{=} \StringTok{"Revised\_Source\_Niche.y"}\NormalTok{)}
+
+\CommentTok{\# Combine the two clusters and remove duplicates}
+\NormalTok{clusters }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(clusters\_1, clusters\_2) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{unique}\NormalTok{()}
+
+\CommentTok{\# Count clusters with more than one sample}
+\NormalTok{count\_of\_clusters }\OtherTok{\textless{}{-}}\NormalTok{ clusters }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Revised\_Source\_Niche) }\SpecialCharTok{\%\textgreater{}\%}             \CommentTok{\# Exclude Revised\_Source\_Niche column}
+  \FunctionTok{group\_by}\NormalTok{(ST.x, Cluster) }\SpecialCharTok{\%\textgreater{}\%}                   \CommentTok{\# Group by ST.x and Cluster}
+  \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                   \CommentTok{\# Count the number of samples in each cluster}
+  \FunctionTok{filter}\NormalTok{(n }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                             \CommentTok{\# Filter clusters with more than one sample}
+  \FunctionTok{group\_by}\NormalTok{(ST.x) }\SpecialCharTok{\%\textgreater{}\%}                            \CommentTok{\# Group by ST.x}
+  \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                   \CommentTok{\# Count the number of clusters}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Count of Clusters"} \OtherTok{=}\NormalTok{ n) }\SpecialCharTok{\%\textgreater{}\%}           \CommentTok{\# Rename our column}
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,                        }\CommentTok{\# Add a row for total}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \StringTok{"Total"}\NormalTok{)))}
+
+\CommentTok{\# Identify cross{-}sectoral clusters}
+\NormalTok{clusters\_by\_source }\OtherTok{\textless{}{-}}\NormalTok{ clusters }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{val\_col =} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                       \CommentTok{\# Add a column with a constant value}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Sample) }\SpecialCharTok{\%\textgreater{}\%}                           \CommentTok{\# Remove the Sample column}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =} \StringTok{"Revised\_Source\_Niche"}\NormalTok{, }\AttributeTok{values\_from =} \StringTok{"val\_col"}\NormalTok{, }\AttributeTok{values\_fill =} \DecValTok{0}\NormalTok{, }\AttributeTok{values\_fn =}\NormalTok{ sum) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Pivot wider to get sectoral columns}
+  \FunctionTok{rowwise}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                 \CommentTok{\# Operate row{-}wise}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Cross\_sectoral =} \FunctionTok{sum}\NormalTok{(}\FunctionTok{c\_across}\NormalTok{(Livestock}\SpecialCharTok{:}\StringTok{\textasciigrave{}}\AttributeTok{Wild Animal}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Add a column indicating cross{-}sectoral clusters}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Cluster\_Strain\_Count =}\NormalTok{ Livestock }\SpecialCharTok{+} \StringTok{\textasciigrave{}}\AttributeTok{Companion Animal}\StringTok{\textasciigrave{}} \SpecialCharTok{+}\NormalTok{ Human }\SpecialCharTok{+}\NormalTok{ Food }\SpecialCharTok{+}\NormalTok{ Environmental }\SpecialCharTok{+} \StringTok{\textasciigrave{}}\AttributeTok{Wild Animal}\StringTok{\textasciigrave{}}\NormalTok{) }\CommentTok{\# Add a column indicating count of strains per cluster}
+
+\CommentTok{\# Create Cross\_and\_mono\_clusters by filtering clusters with more than one strain, then tallying and pivoting}
+\NormalTok{Cross\_and\_mono\_clusters }\OtherTok{\textless{}{-}}\NormalTok{ clusters\_by\_source }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Cluster\_Strain\_Count }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}          \CommentTok{\# Filter clusters with more than one strain}
+  \FunctionTok{select}\NormalTok{(ST.x, Cluster, Cross\_sectoral) }\SpecialCharTok{\%\textgreater{}\%}     \CommentTok{\# Select relevant columns}
+  \FunctionTok{group\_by}\NormalTok{(ST.x, Cross\_sectoral }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}    \CommentTok{\# Group by ST.x and whether the cluster is cross{-}sectoral}
+  \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}                                   \CommentTok{\# Count the number of clusters in each group}
+  \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{names\_from =} \StringTok{\textasciigrave{}}\AttributeTok{Cross\_sectoral == TRUE}\StringTok{\textasciigrave{}}\NormalTok{, }\AttributeTok{values\_from =}\NormalTok{ n, }\AttributeTok{values\_fill =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Pivot wider to get separate columns for cross{-}sectoral and mono{-}sectoral clusters}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"Mono Sectoral Clusters"} \OtherTok{=} \StringTok{\textasciigrave{}}\AttributeTok{FALSE}\StringTok{\textasciigrave{}}\NormalTok{,    }\CommentTok{\# Rename columns for clarity}
+         \StringTok{"Cross Sectoral Clusters"} \OtherTok{=} \StringTok{\textasciigrave{}}\AttributeTok{TRUE}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}\CommentTok{\# Rename our column}
+\NormalTok{  ungroup }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,                        }\CommentTok{\# Add a row for total}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), sum),}
+                      \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), }\SpecialCharTok{\textasciitilde{}} \StringTok{"Total"}\NormalTok{)))}
+
+\CommentTok{\# Create stats\_cross\_cluster\_size by summarizing cross{-}sectoral clusters}
+\NormalTok{stats\_cross\_cluster\_size }\OtherTok{\textless{}{-}}\NormalTok{ clusters\_by\_source }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Cross\_sectoral }\SpecialCharTok{==} \ConstantTok{TRUE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}                                              \CommentTok{\# Filter cross{-}sectoral clusters}
+  \FunctionTok{group\_by}\NormalTok{(ST.x) }\SpecialCharTok{\%\textgreater{}\%}                                                              \CommentTok{\# Group by ST.x}
+  \FunctionTok{summarise}\NormalTok{(}\StringTok{"Minimum Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{min}\NormalTok{(Cluster\_Strain\_Count),      }\CommentTok{\# Calculate minimum cluster size}
+            \StringTok{"Median Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{median}\NormalTok{(Cluster\_Strain\_Count),    }\CommentTok{\# Calculate median cluster size}
+            \StringTok{"Maximum Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{max}\NormalTok{(Cluster\_Strain\_Count)) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Calculate maximum cluster size}
+  \FunctionTok{bind\_rows}\NormalTok{(}\FunctionTok{summarise}\NormalTok{(.,                                                          }\CommentTok{\# Add a row for total}
+                      \StringTok{"ST.x"} \OtherTok{=} \StringTok{"Total"}\NormalTok{,}
+                      \StringTok{"Minimum Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{min}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Minimum Cross{-}Source Cluster Size}\StringTok{\textasciigrave{}}\NormalTok{),}
+                      \StringTok{"Median Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{median}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Median Cross{-}Source Cluster Size}\StringTok{\textasciigrave{}}\NormalTok{),}
+                      \StringTok{"Maximum Cross{-}Source Cluster Size"} \OtherTok{=} \FunctionTok{max}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Maximum Cross{-}Source Cluster Size}\StringTok{\textasciigrave{}}\NormalTok{)))}
+
+\CommentTok{\# Combine all the tables into one final table}
+\NormalTok{final\_table }\OtherTok{\textless{}{-}}\NormalTok{ base\_table }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{left\_join}\NormalTok{(count\_of\_clustered\_samples, }\AttributeTok{by =} \StringTok{"ST.x"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Join with count\_of\_clustered\_samples}
+  \FunctionTok{left\_join}\NormalTok{(count\_of\_clusters, }\AttributeTok{by =} \StringTok{"ST.x"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}           \CommentTok{\# Join with count\_of\_clusters}
+  \FunctionTok{left\_join}\NormalTok{(Cross\_and\_mono\_clusters, }\AttributeTok{by =} \StringTok{"ST.x"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}     \CommentTok{\# Join with Cross\_and\_mono\_clusters}
+  \FunctionTok{left\_join}\NormalTok{(stats\_cross\_cluster\_size, }\AttributeTok{by =} \StringTok{"ST.x"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}    \CommentTok{\# Join with stats\_cross\_cluster\_size}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{"ST"} \OtherTok{=}\NormalTok{ ST.x) }\SpecialCharTok{\%\textgreater{}\%}                                 \CommentTok{\# Rename our column}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ST =} \FunctionTok{str\_replace}\NormalTok{(ST, }\StringTok{"ST"}\NormalTok{, }\StringTok{""}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}              \CommentTok{\# Strip out the ST characters}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Count of ST}\StringTok{\textasciigrave{}}\NormalTok{))}
+
+\CommentTok{\# Put row for total at the end}
+\NormalTok{final\_row }\OtherTok{\textless{}{-}}\NormalTok{ final\_table }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(ST }\SpecialCharTok{==} \StringTok{"Total"}\NormalTok{) }\CommentTok{\# Extract final row}
+
+\NormalTok{final\_table }\OtherTok{\textless{}{-}}\NormalTok{ final\_table }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(ST }\SpecialCharTok{!=} \StringTok{"Total"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Filter out final row}
+  \FunctionTok{bind\_rows}\NormalTok{(final\_row)                                   }\CommentTok{\# Bind final row back in}
+
+\CommentTok{\# Display the final table}
+\NormalTok{knitr}\SpecialCharTok{::}\FunctionTok{kable}\NormalTok{(final\_table, }\AttributeTok{align =} \StringTok{\textquotesingle{}c\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.0318}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.0591}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1273}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.0864}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1091}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1136}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1591}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1545}}
+  >{\centering\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1591}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\centering
+ST
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Count of ST
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Count of Clustered Samples
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Count of Clusters
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Mono Sectoral Clusters
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Cross Sectoral Clusters
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Minimum Cross-Source Cluster Size
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Median Cross-Source Cluster Size
+\end{minipage} & \begin{minipage}[b]{\linewidth}\centering
+Maximum Cross-Source Cluster Size
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+131 & 841 & 610 & 57 & 47 & 10 & 2 & 4.0 & 251 \\
+95 & 247 & 150 & 23 & 18 & 5 & 2 & 10.0 & 31 \\
+1193 & 201 & 153 & 9 & 7 & 2 & 20 & 67.5 & 115 \\
+69 & 170 & 73 & 19 & 16 & 3 & 3 & 3.0 & 6 \\
+117 & 132 & 89 & 17 & 13 & 4 & 2 & 2.5 & 16 \\
+648 & 113 & 17 & 8 & 8 & 0 & NA & NA & NA \\
+963 & 87 & 80 & 2 & 1 & 1 & 75 & 75.0 & 75 \\
+457 & 69 & 46 & 11 & 9 & 2 & 4 & 10.0 & 16 \\
+57 & 59 & 43 & 8 & 6 & 2 & 10 & 12.5 & 15 \\
+80 & 29 & 19 & 4 & 2 & 2 & 2 & 6.5 & 11 \\
+Total & 1948 & 1280 & 158 & 127 & 31 & 2 & 10.0 & 251 \\
+\end{longtable}
+
+\hypertarget{figure-4}{%
+\subsection{Figure 4}\label{figure-4}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Function to read and annotate distances with sequence type}
+\NormalTok{read\_and\_annotate }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(file\_path, sequence\_type) \{}
+  \FunctionTok{read\_delim}\NormalTok{(}\AttributeTok{file =}\NormalTok{ file\_path, }\AttributeTok{delim =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{, }\AttributeTok{show\_col\_types =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{ST =}\NormalTok{ sequence\_type)}
+\NormalTok{\}}
+
+\CommentTok{\# Initialize an empty data frame for distances}
+\NormalTok{distances2 }\OtherTok{\textless{}{-}} \FunctionTok{tibble}\NormalTok{()}
+
+\CommentTok{\# List of sequence types and their respective file paths}
+\NormalTok{sequence\_types }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"ST131"}\NormalTok{, }\StringTok{"ST117"}\NormalTok{, }\StringTok{"ST963"}\NormalTok{, }\StringTok{"ST69"}\NormalTok{, }\StringTok{"ST457"}\NormalTok{, }\StringTok{"ST57"}\NormalTok{, }\StringTok{"ST648"}\NormalTok{, }\StringTok{"ST1193"}\NormalTok{, }\StringTok{"ST80"}\NormalTok{, }\StringTok{"ST95"}\NormalTok{)}
+\NormalTok{file\_paths }\OtherTok{\textless{}{-}} \FunctionTok{sprintf}\NormalTok{(}\StringTok{"../analysis/SKA/\%s\_dists/\%s\_dist\_100\_SNP.distances.tsv"}\NormalTok{, sequence\_types, sequence\_types)}
+
+\CommentTok{\# Process each sequence type}
+\ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in} \FunctionTok{seq\_along}\NormalTok{(sequence\_types)) \{}
+\NormalTok{  distances }\OtherTok{\textless{}{-}} \FunctionTok{read\_and\_annotate}\NormalTok{(file\_paths[i], sequence\_types[i])}
+\NormalTok{  distances2 }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(distances2, distances)}
+\NormalTok{\}}
+
+\CommentTok{\#Filter out unwanted strains}
+\NormalTok{distances2 }\OtherTok{\textless{}{-}}\NormalTok{ distances2 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ genometa}\SpecialCharTok{$}\NormalTok{name }\SpecialCharTok{\&} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ genometa}\SpecialCharTok{$}\NormalTok{name)}
+
+\CommentTok{\# Process each unique sequence type in distances2}
+\ControlFlowTok{for}\NormalTok{(sequence\_type }\ControlFlowTok{in} \FunctionTok{unique}\NormalTok{(distances2}\SpecialCharTok{$}\NormalTok{ST)) \{}
+  \FunctionTok{set.seed}\NormalTok{(}\DecValTok{1}\NormalTok{)  }\CommentTok{\# For reproducibility}
+
+  \CommentTok{\# Filter and select distances}
+\NormalTok{  dists }\OtherTok{\textless{}{-}}\NormalTok{ distances2 }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(ST }\SpecialCharTok{==}\NormalTok{ sequence\_type, SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{, SNPs)}
+  
+  \CommentTok{\# Extract sources from genotypic/metadata table}
+\NormalTok{  sources }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{filter}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"ST"}\NormalTok{, ST\_new) }\SpecialCharTok{==}\NormalTok{ sequence\_type) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{select}\NormalTok{(name, Revised\_Source\_Niche) }\SpecialCharTok{\%\textgreater{}\%}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{color =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Companion Animal"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#59398d95"}\NormalTok{,}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Environmental"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#709b4695"}\NormalTok{,}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Food"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#c09f3d95"}\NormalTok{,}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Human"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#48c59595"}\NormalTok{,}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Livestock"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#c26bbc95"}\NormalTok{,}
+\NormalTok{      Revised\_Source\_Niche }\SpecialCharTok{==} \StringTok{"Wild Animal"} \SpecialCharTok{\textasciitilde{}} \StringTok{"\#b9553d95"}
+\NormalTok{    ))}
+
+  \CommentTok{\# Create igraph graph from edge list}
+\NormalTok{  g }\OtherTok{\textless{}{-}} \FunctionTok{graph\_from\_data\_frame}\NormalTok{(}\AttributeTok{d =}\NormalTok{ dists, }\AttributeTok{directed =} \ConstantTok{FALSE}\NormalTok{)}
+  
+  \CommentTok{\# Assign colors to vertices based on names}
+\NormalTok{  vertex\_color\_vector }\OtherTok{\textless{}{-}}\NormalTok{ sources}\SpecialCharTok{$}\NormalTok{color[}\FunctionTok{match}\NormalTok{(}\FunctionTok{V}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{name, sources}\SpecialCharTok{$}\NormalTok{name)]}
+  
+  \CommentTok{\# Set edge thickness based on SNPs}
+  \FunctionTok{E}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{thickness }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{E}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{SNPs }\SpecialCharTok{\textless{}=} \DecValTok{20}\NormalTok{, }\DecValTok{3}\NormalTok{, }\FunctionTok{ifelse}\NormalTok{(}\FunctionTok{E}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{SNPs }\SpecialCharTok{\textless{}=} \DecValTok{50}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+
+  \CommentTok{\# Plot graph}
+  \FunctionTok{pdf}\NormalTok{(}\AttributeTok{file =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"../figures/Network\_graphs/Network\_"}\NormalTok{, sequence\_type, }\StringTok{".pdf"}\NormalTok{), }\AttributeTok{width =} \FloatTok{11.69}\NormalTok{, }\AttributeTok{height =} \FloatTok{8.27}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(g, }\AttributeTok{edge.width =} \FunctionTok{E}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{thickness, }\AttributeTok{rescale =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{main =}\NormalTok{ sequence\_type, }\AttributeTok{vertex.size =} \DecValTok{3}\NormalTok{, }\AttributeTok{vertex.label =} \ConstantTok{NA}\NormalTok{, }\AttributeTok{vertex.color =}\NormalTok{ vertex\_color\_vector)}
+  \FunctionTok{dev.off}\NormalTok{()}
+  
+  \CommentTok{\# Detect communities}
+\NormalTok{  clusters }\OtherTok{\textless{}{-}} \FunctionTok{cluster\_walktrap}\NormalTok{(g)}
+  
+  \CommentTok{\# Plot communities}
+  \FunctionTok{pdf}\NormalTok{(}\AttributeTok{file =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"../figures/Network\_graphs/Communities\_"}\NormalTok{, sequence\_type, }\StringTok{".pdf"}\NormalTok{), }\AttributeTok{width =} \FloatTok{11.69}\NormalTok{, }\AttributeTok{height =} \FloatTok{8.27}\NormalTok{)}
+  \FunctionTok{plot}\NormalTok{(clusters, g, }\AttributeTok{edge.width =} \FunctionTok{E}\NormalTok{(g)}\SpecialCharTok{$}\NormalTok{thickness, }\AttributeTok{rescale =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{main =}\NormalTok{ sequence\_type, }\AttributeTok{vertex.size =} \DecValTok{3}\NormalTok{, }\AttributeTok{vertex.label =} \ConstantTok{NA}\NormalTok{)}
+  \FunctionTok{dev.off}\NormalTok{()}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ST95\_metadata }\OtherTok{\textless{}{-}}\NormalTok{ genometa }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(name, Revised\_Source\_Niche, Collection\_Year) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}} \OtherTok{=}\NormalTok{ name) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Sample 1\textquotesingle{}} \OtherTok{=}\NormalTok{ name)}
+
+\NormalTok{ST95 }\OtherTok{\textless{}{-}}\NormalTok{ dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{left\_join}\NormalTok{(ST95\_metadata, }\AttributeTok{by =} \StringTok{"Sample 1"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\StringTok{\textasciigrave{}}\AttributeTok{Sample 2.y}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample 2"} \OtherTok{=} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2.x}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{left\_join}\NormalTok{(ST95\_metadata, }\AttributeTok{by =} \StringTok{"Sample 2"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1.y}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample 1"} \OtherTok{=} \StringTok{\textasciigrave{}}\AttributeTok{Sample 1.x}\StringTok{\textasciigrave{}}\NormalTok{)}
+
+\NormalTok{clusters }\OtherTok{\textless{}{-}} \FunctionTok{bind\_rows}\NormalTok{(clusters\_1, clusters\_2) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{unique}\NormalTok{()}
+
+\NormalTok{ST95\_clusters }\OtherTok{\textless{}{-}}\NormalTok{ ST95 }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}}\NormalTok{, }\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{pivot\_longer}\NormalTok{(}\AttributeTok{cols =} \FunctionTok{everything}\NormalTok{(), }\AttributeTok{values\_to =} \StringTok{"distinct\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{distinct}\NormalTok{(distinct\_value) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample 1"} \OtherTok{=} \StringTok{"distinct\_value"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{left\_join}\NormalTok{(ST95\_metadata, }\AttributeTok{by =} \StringTok{"Sample 1"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{rename}\NormalTok{(}\StringTok{"Sample"} \OtherTok{=} \StringTok{"Sample 1"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{left\_join}\NormalTok{(clusters, }\AttributeTok{by =} \StringTok{"Sample"}\NormalTok{)}
+
+\NormalTok{ST95\_clusters }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Cluster, Revised\_Source\_Niche.x) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{() }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{pivot\_wider}\NormalTok{(}\AttributeTok{values\_from =}\NormalTok{ n, }\AttributeTok{names\_from =}\NormalTok{ Revised\_Source\_Niche.x, }\AttributeTok{values\_fill =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{View}\NormalTok{()}
+
+\NormalTok{ST95\_clusters }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}}\NormalTok{, Cluster) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{inner\_join}\NormalTok{(ST95, }\AttributeTok{by =} \StringTok{"Sample 2"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Cluster }\SpecialCharTok{==} \DecValTok{7}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{summarise}\NormalTok{(}\FunctionTok{median}\NormalTok{(SNPs), }\FunctionTok{min}\NormalTok{(SNPs), }\FunctionTok{max}\NormalTok{(SNPs))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 3
+##   `median(SNPs)` `min(SNPs)` `max(SNPs)`
+##            <dbl>       <dbl>       <dbl>
+## 1             53          32          81
+\end{verbatim}
+
+\hypertarget{exploring-phylogenetic-distance-thresholds-using-cgmlst-and-snp-based-approaches}{%
+\subsection{Exploring phylogenetic distance thresholds using cgMLST and
+SNP-based
+approaches}\label{exploring-phylogenetic-distance-thresholds-using-cgmlst-and-snp-based-approaches}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Among 1,948 isolates that reside within these STs, \_ exhibited both ≤ 100 SNPs and an allelic distance of ≤ 40. }
+
+\NormalTok{both\_dists }\OtherTok{\textless{}{-}}\NormalTok{ distances2 }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{left\_join}\NormalTok{(cgmlst\_dists) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{filter}\NormalTok{(}\StringTok{\textasciigrave{}}\AttributeTok{Sample 1}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ genometa}\SpecialCharTok{$}\NormalTok{name }\SpecialCharTok{\&} \StringTok{\textasciigrave{}}\AttributeTok{Sample 2}\StringTok{\textasciigrave{}} \SpecialCharTok{\%in\%}\NormalTok{ genometa}\SpecialCharTok{$}\NormalTok{name)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining with `by = join_by(`Sample 1`, `Sample 2`)`
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{both\_dists }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(SNPs }\SpecialCharTok{\textless{}=} \DecValTok{100} \SpecialCharTok{\&}\NormalTok{ value }\SpecialCharTok{\textless{}=} \DecValTok{40}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{tally}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 2 x 2
+##   `SNPs <= 100 & value <= 40`      n
+##   <lgl>                        <int>
+## 1 FALSE                       429407
+## 2 TRUE                         11837
+\end{verbatim}
+
+\hypertarget{figure-6}{%
+\subsection{Figure 6}\label{figure-6}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pal }\OtherTok{\textless{}{-}} \FunctionTok{colorRampPalette}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"yellow"}\NormalTok{, }\StringTok{"blue"}\NormalTok{))}
+\NormalTok{dot\_cols }\OtherTok{\textless{}{-}} \FunctionTok{pal}\NormalTok{(}\DecValTok{41}\NormalTok{)}
+
+\NormalTok{df\_all\_ST\_filtered\_SNPs\_all }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{source\_combo =} \FunctionTok{str\_replace}\NormalTok{(source\_combo, }\StringTok{\textquotesingle{}Companion Animal\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Comp. Animal\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{source\_combo =} \FunctionTok{str\_replace}\NormalTok{(source\_combo, }\StringTok{\textquotesingle{}Environmental\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}Environ.\textquotesingle{}}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+        \FunctionTok{filter}\NormalTok{(Revised\_Source\_Niche.x }\SpecialCharTok{!=}\NormalTok{ Revised\_Source\_Niche.y) }\SpecialCharTok{\%\textgreater{}\%} 
+        \FunctionTok{filter}\NormalTok{(value }\SpecialCharTok{\textless{}} \DecValTok{40}\NormalTok{)  }\SpecialCharTok{\%\textgreater{}\%} 
+        \FunctionTok{mutate}\NormalTok{(}\AttributeTok{value =} \FunctionTok{as.factor}\NormalTok{(value)) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Allelic}\SpecialCharTok{\textbackslash{}n}\StringTok{Distance}\SpecialCharTok{\textbackslash{}n}\StringTok{(cgMLST)\textquotesingle{}} \OtherTok{=}\NormalTok{ value) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{rename}\NormalTok{(}\StringTok{\textquotesingle{}Sequence type\textquotesingle{}} \OtherTok{=}\NormalTok{ ST.x) }\SpecialCharTok{\%\textgreater{}\%}
+        \FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
+        \FunctionTok{geom\_boxplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ SNPs, }\AttributeTok{y =} \StringTok{\textasciigrave{}}\AttributeTok{Sequence type}\StringTok{\textasciigrave{}}\NormalTok{)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_jitter}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ SNPs, }\AttributeTok{y =} \StringTok{\textasciigrave{}}\AttributeTok{Sequence type}\StringTok{\textasciigrave{}}\NormalTok{, }\AttributeTok{color =} \StringTok{\textasciigrave{}}\AttributeTok{Allelic}\SpecialCharTok{\textbackslash{}n}\AttributeTok{Distance}\SpecialCharTok{\textbackslash{}n}\AttributeTok{(cgMLST)}\StringTok{\textasciigrave{}}\NormalTok{), }\AttributeTok{size =} \FloatTok{0.25}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =}\NormalTok{ dot\_cols, }\AttributeTok{breaks =} \FunctionTok{as.factor}\NormalTok{(}\DecValTok{0}\SpecialCharTok{:}\DecValTok{40}\NormalTok{)) }\SpecialCharTok{+}
+        \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{source\_combo, }\AttributeTok{nrow =} \DecValTok{7}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{2}\NormalTok{, }\AttributeTok{strip.position=}\StringTok{"right"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{)) }\SpecialCharTok{+}
+        \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{xintercept =} \DecValTok{100}\NormalTok{, }\AttributeTok{color =} \StringTok{"red"}\NormalTok{, }\AttributeTok{linetype =} \StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+}
+        \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1300}\NormalTok{, }\AttributeTok{by =} \DecValTok{100}\NormalTok{)) }\SpecialCharTok{+}
+        \FunctionTok{guides}\NormalTok{(}\AttributeTok{colour =} \FunctionTok{guide\_legend}\NormalTok{(}\AttributeTok{override.aes =} \FunctionTok{list}\NormalTok{(}\AttributeTok{size=}\FloatTok{1.5}\NormalTok{), }\AttributeTok{ncol =} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{General_analysis_files/figure-latex/unnamed-chunk-28-1.pdf}
+
+\end{document}
