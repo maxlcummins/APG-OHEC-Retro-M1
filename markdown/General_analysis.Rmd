@@ -313,7 +313,10 @@ p2 <- ggtree(tree,
         layout = 'circular',
         open.angle = 0) %<+%
         tree_df +
-  geom_tippoint(aes(colour = State), size = 0.2, alpha = 0.5) +
+  geom_tree(size = 0.2) +
+  geom_tippoint(aes(colour = State),
+        size = 0.2,
+        alpha = 0.5) +
   scale_color_manual(values = c("ACT" = "lightblue", "NSW" = "orange", "NT" = "darkred", "QLD" = "purple", 
                                 "SA" = "red", "TAS" = "green", "WA" = "pink", "VIC" = "darkgreen", 
                                 "Unknown" = "grey"))
@@ -329,7 +332,7 @@ p3 <- gheatmap(
         colnames = TRUE,
         offset = 1,
         width = 0.3,
-        color = rgb(220, 220, 220, max = 255, alpha = 50)
+        color = rgb(220, 220, 220, max = 255, alpha = 0)
         ) +
 theme(legend.position = "right") +#,
         #legend.box = "vertical",
@@ -340,7 +343,7 @@ theme(legend.position = "right") +#,
 scale_fill_manual(
         values = c(source_cols, clermont_cols, Intestinal_or_Extraintestinal_type_cols, Revised_Source_Type_cols),
         na.value = 'grey'
-        ) 
+        )
 
 p3
 ```
@@ -1177,6 +1180,35 @@ plot4 <- ggVennDiagram(venn_data) +
 
 #ggsave(filename = "../Supplementary_Material/Supplementary_Figure_4B.pdf", plot = plot4, width = 11.69, height = 8.27, units = "in", dpi = 300)
 ```
+
+```{r}
+# Calculate the first instance of FALSE for each ST.x group
+first_false_positions <- df_all_ST_filtered_SNPs_all %>%
+    filter(SNPs <= 300) %>%
+    group_by(ST.x) %>%
+    filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>%
+    summarize(first_false = min(SNPs, na.rm = TRUE))
+
+# Join the first_false_positions with the main data
+plot_data <- df_all_ST_filtered_SNPs_all %>%
+    filter(SNPs <= 300) %>%
+    group_by(SNPs, Revised_Source_Niche.x == Revised_Source_Niche.y, ST.x) %>%
+    tally() %>%
+    left_join(first_false_positions, by = "ST.x") %>%
+  arrange(desc(n)) %>%
+    rename("Same Source" = `Revised_Source_Niche.x == Revised_Source_Niche.y`,
+           "SNP Distance" = SNPs,
+           "Count of Genome Pairs" = n)
+
+# Create the plot
+ggplot(plot_data) +
+    geom_bar(aes(x = `SNP Distance`, y = `Count of Genome Pairs`, fill = `Same Source`), stat = "identity") + 
+    theme_minimal() +
+    facet_wrap(~ ST.x, scales = "free_y", nrow = 5, ncol = 2) +
+    geom_vline(aes(xintercept = first_false), linetype = "dashed", color = "red") +
+scale_fill_manual(values = c("orange", "black"))
+```
+
 
 ```{r}
 #Save SNP and allelic distance matrix
