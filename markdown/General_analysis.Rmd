@@ -1278,7 +1278,7 @@ long_distances_w_source %>% write_delim("../Supplementary_Material/Pairwise_SNP_
 ## Reviewer requests
 
 ```{r}
-Metadata_Urban_Zoo <- read_delim("../../Metadata_Urban_Zoo.txt",
+Metadata_Urban_Zoo <- read_delim("../delims/Metadata_Urban_Zoo.txt",
                                  delim = "\t", escape_double = FALSE,
                                  trim_ws = TRUE)
 
@@ -1290,7 +1290,7 @@ for(ST in zoo_top_10_STs){
     write_delim(paste0("../Revision/Zoo_ST_lists_top10/","ST", ST, "_names.txt"), delim = "\t")
 }
 
-S1_Urban_Zoo <- read_delim("../../Extra_metadata_Urban_Zoo_S1.txt",
+S1_Urban_Zoo <- read_delim("../delims/Extra_metadata_Urban_Zoo_S1.txt",
                                  delim = "\t", escape_double = FALSE,
                                  trim_ws = TRUE)
 
