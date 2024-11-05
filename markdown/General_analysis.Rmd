@@ -412,7 +412,14 @@ ggsave(plot = fig2c, filename =  "../figures/Final_Figures/Figure_2C.pdf", width
 
 
 ```{r}
-#In total, _ isolates (comprising _ isolate pairs) were identified as putative clusters; the remaining _ isolates exceeded this distance from any other isolate in the collection. 
+#In total, _ isolates (comprising _ isolate pairs) were identified as putative clusters; the remaining _ isolates exceeded this distance from any other isolate in the collection.
+
+# If "../analysis/cgMLST_dists_5471.txt.gz" is present and "../analysis/cgMLST_dists_5471.txt" isnt, unzip the file
+if (file.exists("../analysis/cgMLST_dists_5471.txt.gz") & !file.exists("../analysis/cgMLST_dists_5471.txt")) {
+  system("gunzip ../analysis/cgMLST_dists_5471.txt.gz")
+}
+
+# Read in our cgMLST distances
 cgmlst_dists <- vroom("../analysis/cgMLST_dists_5471.txt", show_col_types = FALSE)
 
 cgmlst_dists <- cgmlst_dists %>%
