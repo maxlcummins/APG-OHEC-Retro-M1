@@ -122,8 +122,8 @@ data_summary <- genometa %>%
   summarise(Count = n(), .groups = 'drop')
 
 # Create the bubble plot
-ggplot(data_summary, aes(x = Collection_Year, y = Revised_Source_Niche)) +
-  geom_jitter(aes(size = Count, color = State), height = 0.4, alpha = 0.7) +
+figure_1 <- ggplot(data_summary, aes(x = Collection_Year, y = Revised_Source_Niche)) +
+  geom_jitter(aes(size = Count, color = State), height = 0.2, alpha = 0.7) +
   scale_size(range = c(1, 10), name = "Number of isolates") +
   geom_hline(yintercept = seq_along(unique(data_summary$Revised_Source_Niche)) - 0.5, color = "grey80") + # Add separating lines
   scale_x_continuous(breaks = seq(1986, 2023, by = 1)) + # Show every year on the x-axis
@@ -134,8 +134,16 @@ ggplot(data_summary, aes(x = Collection_Year, y = Revised_Source_Niche)) +
   labs(x = "Year of collection", y = "Source") +
   theme(
     axis.text.x = element_text(angle = 90, hjust = 1),
-    legend.position = "right"
-  )
+    axis.text.y = element_text(size = 10),
+    legend.position = "right",
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.background = element_rect(fill = "white", color = NA),
+    plot.margin = unit(c(1.5, 0.5, 0.5, 0.5), "cm")  # Extra space for the title
+  ) +
+  scale_y_discrete(expand = c(0.025, 0.15))
+
+
+ggsave(plot = figure_1, filename =  "../figures/Final_Figures/Figure_1A.pdf", width = 8, height = 6)
 ```
 
 ## Figure 1B
@@ -148,7 +156,7 @@ agg_data <- genometa %>%
   summarise(Isolates = n())
 
 # Create the alluvial plot
-ggplot(agg_data,
+figure_1b <- ggplot(agg_data,
        aes(axis1 = Revised_Source_Niche, axis2 = Revised_Source_Type, axis3 = Intestinal_or_Extraintestinal, y = Isolates)) +
   geom_alluvium(aes(fill = Revised_Source_Niche), width = 1/12) +
   geom_stratum(fill = "white", width = 1/12, color = "black") +
@@ -162,6 +170,8 @@ ggplot(agg_data,
   labs(#title = "",
        x = "",
        y = "Number of Isolates")
+
+ggsave(plot = figure_1b, filename =  "../figures/Final_Figures/Figure_1B.pdf", width = 8, height = 6)
 ```
 ```{r}
 # Generate the color palette
@@ -313,15 +323,9 @@ p2 <- ggtree(tree,
         layout = 'circular',
         open.angle = 0) %<+%
         tree_df +
-  geom_tree(size = 0.2) +
-  geom_tippoint(aes(colour = State),
-        size = 0.2,
-        alpha = 0.5) +
-  scale_color_manual(values = c("ACT" = "lightblue", "NSW" = "orange", "NT" = "darkred", "QLD" = "purple", 
-                                "SA" = "red", "TAS" = "green", "WA" = "pink", "VIC" = "darkgreen", 
-                                "Unknown" = "grey"))
+  geom_tree(size = 0.2)
 
-tree_df <- p2$data %>% filter(isTip == TRUE) %>% select(label, clermontyping..clermontyping_phylogroup, Revised_Source_Type, Revised_Source_Niche, Intestinal_or_Extraintestinal) %>% column_to_rownames('label')
+tree_df <- p2$data %>% filter(isTip == TRUE) %>% select(State, label, clermontyping..clermontyping_phylogroup, Revised_Source_Type, Revised_Source_Niche, Intestinal_or_Extraintestinal) %>% column_to_rownames('label')
 
 p3 <- gheatmap(
         p = p2,
@@ -341,11 +345,14 @@ theme(legend.position = "right") +#,
         #legend.text = element_text(size = 8)
         #) +
 scale_fill_manual(
-        values = c(source_cols, clermont_cols, Intestinal_or_Extraintestinal_type_cols, Revised_Source_Type_cols),
+        values = c(source_cols, clermont_cols, Intestinal_or_Extraintestinal_type_cols, Revised_Source_Type_cols, c("ACT" = "lightblue", "NSW" = "orange", "NT" = "darkred", "QLD" = "purple", 
+                                "SA" = "red", "TAS" = "green", "WA" = "pink", "VIC" = "darkgreen", 
+                                "Unknown" = "grey")),
         na.value = 'grey'
-        )
+        ) 
 
-p3
+
+ggsave(plot = p3, filename =  "../figures/Final_Figures/Figure_2A.pdf", width = 12, height = 8)
 ```
 
 ## Figure 2 - Part B
@@ -357,19 +364,20 @@ data_summary <- genometa %>%
   summarise(Count = n(), .groups = 'drop')
 
 # Create the plot
-ggplot(data_summary, aes(x = Revised_Source_Niche, y = Count, fill = Consensus_phylogroup)) +
+fig2b <- ggplot(data_summary, aes(x = Revised_Source_Niche, y = Count, fill = Consensus_phylogroup)) +
   geom_bar(stat = "identity", position = "fill") +
   coord_flip() +  # Flips the axes to match the original plot's orientation
   scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
-    theme(axis.text.y = element_text(size = 16),
-        axis.text.x = element_text(size = 16),
-        axis.title.y = element_text(size = 20),
-        axis.title.x = element_text(size = 20),
+    theme(axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.title.y = element_text(size = 24),
+        axis.title.x = element_text(size = 24),
         panel.background = element_rect(fill = "white", color = NA),
         legend.position = "none") +  # Optional: Clean minimalistic theme
   labs(x = "Source Niche", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
   scale_fill_manual(values = clermont_cols)
 
+ggsave(plot = fig2b, filename =  "../figures/Final_Figures/Figure_2B.pdf", width = 12, height = 12)
 
 ```
 
@@ -383,18 +391,21 @@ data_summary <- genometa %>%
   summarise(Count = n(), .groups = 'drop')
 
 # Create the plot
-ggplot(data_summary, aes(x = ST_other, y = Count, fill = Revised_Source_Niche)) +
+fig2c <- ggplot(data_summary, aes(x = ST_other, y = Count, fill = Revised_Source_Niche)) +
   geom_bar(stat = "identity", position = "fill") +
   coord_flip() +  # Flips the axes to match the original plot's orientation
   scale_y_continuous(labels = scales::percent) +  # Converts y-axis into percentage
-    theme(axis.text.y = element_text(size = 16),
-        axis.text.x = element_text(size = 16),
-        axis.title.y = element_text(size = 20),
-        axis.title.x = element_text(size = 20),
+    theme(axis.text.y = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.title.y = element_text(size = 24),
+        axis.title.x = element_text(size = 24),
         panel.background = element_rect(fill = "white", color = NA),
         legend.position = "none") +  # Optional: Clean minimalistic theme
   labs(x = "Sequence Type", y = "Percentage", fill = "Phylogroup") +  # Labeling axes and legend
   scale_fill_manual(values = source_cols)
+
+
+ggsave(plot = fig2c, filename =  "../figures/Final_Figures/Figure_2C.pdf", width = 12, height = 12)
 
 ```
 
@@ -517,6 +528,11 @@ dists_w_metadata_x_source <- df_all_ST %>%
 
 # Read in cgMLST clusters
 cgMLST_clusters <- read_delim(file = "../analysis/clusters.txt", show_col_types = FALSE)
+
+# Read in cgMLST clusters (additional column)
+cgMLST_clusters_less_40 <- read_delim(file = "../analysis/clusters_40cgmlst.txt", show_col_types = FALSE)
+
+cgMLST_clusters <- left_join(cgMLST_clusters, cgMLST_clusters_less_40)
 
 # Join cgMLST distance data
 distsnew <- inner_join(df_all_ST, cgmlst_dists, by = c("Sample 1", "Sample 2"))
@@ -667,6 +683,9 @@ df_all_ST_filtered_SNPs_all %>% filter(Revised_Source_Niche.x != Revised_Source_
 ```
 
 ## Figure 3
+
+Note that this figure was used as the template for the final figure, which was generated using an image editor.
+
 ```{r}
 # Load necessary libraries
 library(dplyr)
@@ -717,6 +736,9 @@ sets <- list(
   '11,350' = intersource_total_11350$name_combo
 )
 
+# Open a pdf to save our plot to
+pdf("../figures/Final_Figures/Figure_3.pdf", width = 12, height = 12)
+
 # Generate and plot the Euler diagram
 fit <- euler(sets)
 plot(fit,
@@ -735,7 +757,8 @@ plot(fit,
                    "#FFFFF0"))
 )
 
-
+# Shut down plotting device
+dev.off()
 ```
 
 ## Figure 3 Table for custom annotation
@@ -1004,20 +1027,25 @@ plot(g, edge.width = E(g)$thickness, rescale = TRUE, main = sequence_type, verte
 ```{r}
 #Among 1,948 isolates that reside within these STs, _ exhibited both ≤ 100 SNPs and an allelic distance of ≤ 40. 
 
-both_dists <- distances2 %>% left_join(cgmlst_dists) %>% filter(`Sample 1` %in% genometa$name & `Sample 2` %in% genometa$name)
+# Join the cgMLST and SNP-based distances
+both_dists <- distances2 %>% left_join(cgmlst_dists) %>%
+  #Filter to only include genomes under analysis
+  filter(`Sample 1` %in% genometa$name & `Sample 2` %in% genometa$name)
 
+# Produce a table tallying the number of isolates with both ≤ 100 SNPs and an allelic distance of ≤ 40
 both_dists %>% group_by(SNPs <= 100 & value <= 40) %>% tally()
 ```
 
 
 
-## Figure 6
+## Figure 5
 ```{r}
 
-
+#Define our colour palette
 pal <- colorRampPalette(c("red", "yellow", "blue"))
 dot_cols <- pal(41)
 
+#Plot our figure
 df_all_ST_filtered_SNPs_all %>%
         mutate(source_combo = str_replace(source_combo, 'Companion Animal', 'Comp. Animal')) %>% 
         mutate(source_combo = str_replace(source_combo, 'Environmental', 'Environ.')) %>% 
@@ -1035,12 +1063,18 @@ df_all_ST_filtered_SNPs_all %>%
         geom_vline(xintercept = 100, color = "red", linetype = "dashed") +
         scale_x_continuous(breaks = seq(0,1300, by = 100)) +
         guides(colour = guide_legend(override.aes = list(size=1.5), ncol = 1))
+
+#Save our file
+ggsave(filename = "../figures/Final_Figures/Figure_5.pdf", width = 8.27, height = 11.69, units = "in", dpi = 300)
+
 ```
 
 ## Supplementary Material
 
 ### Supplementary Table 1
 ```{r}
+
+#Generate our supplementary table
 genometa %>%
   select(name, ST_new, Revised_Source_Niche, Revised_Source_Type, Intestinal_or_Extraintestinal, Collection, State, Sample_ID, `IncF_RST..IncF RST`) %>%
   rename('Sample name' = name,
@@ -1056,12 +1090,15 @@ Supplementary Figure X
 
 ### Supplementary Figures
 ```{r}
-
+# Generate a list of STs under analysis
 STs <- df_all_ST_filtered_SNPs_all$ST.x %>% unique()
 
+# Generate a list of colours for our STs
 ST_cols <- paletteer_d("ggthemes::Tableau_10") %>% as.vector()
 
+# Combine ST cols and names
 names(ST_cols) <- STs
+
 
 
 plot2 <- df_all_ST_filtered_SNPs_all %>% rename("ST" = "ST.x") %>% filter(SNPs < 12000) %>%
@@ -1229,5 +1266,650 @@ long_distances_w_source <- df_all_ST_filtered_SNPs_all %>% select(`Sample 1`, `S
 
 #Write to file
 long_distances_w_source %>% write_delim("../Supplementary_Material/Pairwise_SNP_and_allelic_distances_with_source.txt", delim = "\t")
+```
+
+## Reviewer requests
+
+```{r}
+Metadata_Urban_Zoo <- read_delim("../../Metadata_Urban_Zoo.txt",
+                                 delim = "\t", escape_double = FALSE,
+                                 trim_ws = TRUE)
+
+zoo_top_10_STs <- Metadata_Urban_Zoo %>% group_by(`ST(Achtman 7 Gene MLST)`) %>% tally(sort = T) %>% head(10) %>% pull(`ST(Achtman 7 Gene MLST)`)
+
+for(ST in zoo_top_10_STs){
+  Metadata_Urban_Zoo %>% filter(`ST(Achtman 7 Gene MLST)` == ST) %>%
+    select(`Assembly barcode(Assembly stats)`) %>%
+    write_delim(paste0("../Revision/Zoo_ST_lists_top10/","ST", ST, "_names.txt"), delim = "\t")
+}
+
+S1_Urban_Zoo <- read_delim("../../Extra_metadata_Urban_Zoo_S1.txt",
+                                 delim = "\t", escape_double = FALSE,
+                                 trim_ws = TRUE)
+
+UZ_meta <- S1_Urban_Zoo %>% mutate("Sample ID" = str_replace(Accession, ".*\\(", "")) %>% mutate("Sample ID" = str_replace(`Sample ID`, "\\)", "")) %>% full_join(Metadata_Urban_Zoo, by = "Sample ID")
+
+UZ_clusters <- read_delim("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.clusters.tsv",
+                                 delim = "\t", escape_double = FALSE,
+                                 trim_ws = TRUE)
+
+UZ_clusters <- UZ_clusters %>% mutate(ID = str_replace(ID, ".result", "")) 
+
+UZ_dists <- read_delim("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv",
+                                 delim = "\t", escape_double = FALSE,
+                                 trim_ws = TRUE)
+
+UZ_dists <- UZ_dists %>% mutate(`Sample 1` = str_replace(`Sample 1`, ".result", "")) %>% mutate(`Sample 2` = str_replace(`Sample 2`, ".result", ""))
+
+UZ_dists <- UZ_meta %>% rename("Sample 2" = "Assembly barcode(Assembly stats)", "ST" = "ST(Achtman 7 Gene MLST)") %>% select(`Sample 2`, ST, matches("Source_Level"), HHID) %>% full_join(UZ_dists, by ="Sample 2")
+
+UZ_dists <- UZ_meta %>% rename("Sample 1" = "Assembly barcode(Assembly stats)", "ST" = "ST(Achtman 7 Gene MLST)") %>% select(`Sample 1`, ST, matches("Source_Level"), HHID) %>% full_join(UZ_dists, by ="Sample 1")
+
+UZ_dists <- UZ_dists %>% filter(ST.x == ST.y) %>% filter(!is.na(Source_Level3.x)) %>% filter(!is.na(Source_Level3.y))
+
+UZ_dists_less_100 <- UZ_dists %>% filter(SNPs <= 100)
+
+for(sequence_type in unique(UZ_dists_less_100$ST.x)){
+
+  set.seed(1)
+  dists <- UZ_dists_less_100 %>%
+    filter(ST.x == ST.y) %>%
+    filter(ST.x == sequence_type) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  #Extract sources from genotypic/metadata table
+  sources <- UZ_meta %>% filter(`ST(Achtman 7 Gene MLST)` == sequence_type) %>% select("Assembly barcode(Assembly stats)", Source_Level3, HHID) %>% rename("name" = "Assembly barcode(Assembly stats)")
+
+  #Set a colour for each source
+  sources <- sources %>%
+    mutate(color = case_when(
+      Source_Level3 == "human" ~ "#48c59595",
+      Source_Level3 == "livestock" ~ "#c26bbc95",
+      Source_Level3 == "wildlife" ~ "#b9553d95"
+    ))
+  
+  # Convert data frame to edge list for igraph
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  #Get a list of vertex names
+  g_vertex_names <- V(g)$name 
+  
+  # Match colors to vertices based on names
+  vertex_color_vector <- sources$color[match(g_vertex_names, sources$name)]
+  
+    # Match colors to vertices based on names
+  HHID_vector <- sources$HHID[match(g_vertex_names, sources$name)]
+  
+  # Plot the graph
+  pdf(file = paste0("../Revision/UZ_Network_graphs/UZ_",
+                    sequence_type,
+                    ".pdf"),
+      width = 11.69,
+      height = 8.27)
+  
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3,
+                           ifelse(E(g)$SNPs <= 50, 2, 1))
+  
+  
+  set.seed(1)
+  
+  plot(g, edge.width = E(g)$thickness,
+       rescale = TRUE,
+       main = sequence_type,
+       vertex.size = 10,
+       vertex.label = HHID_vector,
+       vertex.color = vertex_color_vector,
+       )
+  
+  legend("bottomleft",
+         legend = c(
+             "human", 
+             "livestock",
+             "wildlife"),
+         fill = c(
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  
+  dev.off()
+
+  
+}
+
+UZ_dists_less_100 %>% filter(Source_Level3.x != Source_Level3.y) %>% mutate(Region.x = str_replace(HHID.x, "[0-9]+$", ""), Region.y = str_replace(HHID.y, "[0-9]+$", "")) %>% filter(HHID.x != HHID.y) %>% filter(Region.x == Region.y) %>% View()
+
+UZ_dists %>% mutate(Region.x = str_replace(HHID.x, "[0-9]+$", ""), Region.y = str_replace(HHID.y, "[0-9]+$", "")) %>%
+  filter(ST.x == ST.y) %>% 
+  ggplot(aes(x = SNPs)) +
+  geom_histogram(binwidth = 1, 
+                 fill = "blue", 
+                 color = "black", 
+                 alpha = 0.7) +
+  labs(title = "Histogram of SNP Distances",
+       x = "SNP Distance",
+       y = "Frequency") +
+  theme_minimal() +
+  facet_wrap(~ HHID.x == HHID.y)
+
+```
+
+
+### PopPunk
+
+```{r}
+
+poppunk <- read_csv("../analysis/PopPunk_clusters.csv") %>% rename('name' = Taxon, "PP-Cluster" = Cluster)
+
+SNPs_poppunk <- poppunk %>% rename('Sample 1' = `name`) %>% inner_join(distances2)
+
+SNPs_poppunk <- poppunk %>% rename('Sample 2' = `name`) %>% inner_join(SNPs_poppunk, by = "Sample 2")
+
+SNPs_poppunk <- genometa %>% select(name, ST_new, Revised_Source_Niche) %>% rename("Sample 1" = name) %>% inner_join(SNPs_poppunk)
+
+SNPs_poppunk <- genometa %>% select(name, ST_new, Revised_Source_Niche) %>% rename("Sample 2" = name) %>% inner_join(SNPs_poppunk)
+
+dists_w_punk <- poppunk %>% rename("Sample 1" = name) %>% full_join(cgmlst_dists)
+
+dists_w_punk <- poppunk %>% rename("Sample 2" = name) %>% full_join(dists_w_punk, by = "Sample 2")
+
+#Compute count of PopPunk clusters
+poppunk %>% group_by(`PP-Cluster`) %>% tally(sort = T) %>% nrow()
+
+cgmlst_less_40 <- cgmlst_dists %>% filter(value <= 40) 
+
+cgMLST_less_40_g <- graph_from_data_frame(d = cgmlst_less_40, directed = FALSE)
+
+cgMLST_less_40_g %>% cluster_louvain() %>% length()
+
+names_of_ST_members <- genometa %>% filter(paste0("ST", ST_new) %in% STs) %>% pull(name)
+
+cgmlst_less_40_select_ST <- cgmlst_dists %>% filter(value <= 40)  %>% filter(`Sample 1` %in% names_of_ST_members & `Sample 2` %in% names_of_ST_members)
+
+cgmlst_less_40_select_ST_g <- graph_from_data_frame(d = cgmlst_less_40_select_ST, directed = FALSE)
+
+cgmlst_less_40_select_ST_g %>% cluster_louvain() %>% length()
+
+cgmlst_less_40 <- cgmlst_dists %>% filter(value <= 40) 
+
+poppunk %>% filter(name %in% names_of_ST_members)%>% group_by(`PP-Cluster`) %>% tally(sort = T) %>% nrow()
+
+cgmlt_clusts <- graph_from_data_frame(d = cgmlst_dists, directed = FALSE) %>% cluster_louvain()
+```
+
+
+### Subset in time/space
+
+```{r}
+
+genometa %>%
+  filter(name %nin% poultry_dupes$name) %>%
+    group_by(State, Collection_Year, Revised_Source_Niche) %>%
+    tally() %>%
+    ggplot(aes(x = Collection_Year, y = n, fill = Revised_Source_Niche)) +
+    geom_col(position = "stack") + # Stacked bar chart
+    facet_wrap(~ State) + # Facet by State
+    labs(
+        title = "Number of Samples Collected by State and Year",
+        x = "Collection Year",
+        y = "Count",
+        fill = "Source Niche"
+    )  +
+scale_fill_manual(
+        values = c(source_cols),
+        na.value = 'grey'
+        ) +
+    theme_minimal() # Use a minimal theme for better visualization
+
+vic_subset <- genometa %>% filter(State == "VIC", Collection_Year %in% c(2013, 2014, 2015, 2016, 2017)) %>% pull(name)
+
+vic_dists_cgmlst <- cgmlst_dists %>% filter(`Sample 1` %in% vic_subset & `Sample 2` %in% vic_subset)
+
+vic_dists_cgmlst <- genometa %>% select(name, Revised_Source_Niche, ST_new, Collection_Year) %>% rename(`Sample 1` = name) %>% inner_join(vic_dists_cgmlst, by = "Sample 1")
+
+vic_dists_cgmlst <- genometa %>% select(name, Revised_Source_Niche, ST_new, Collection_Year) %>% rename(`Sample 2` = name) %>% inner_join(vic_dists_cgmlst, by = "Sample 2")
+
+SNPs_subset <- df_all_ST %>% filter(`Sample 1` %in% vic_dists_cgmlst$`Sample 1` & `Sample 2`  %in% vic_dists_cgmlst$`Sample 2`) %>% select(`Sample 1`, `Sample 2`, SNPs)
+
+vic_dists_cgmlst <- left_join(vic_dists_cgmlst, SNPs_subset, by = c("Sample 1", "Sample 2"))
+
+vic_dists_cgmlst <- vic_dists_cgmlst %>% filter(ST_new.x == ST_new.y) %>% filter(!is.na(SNPs))
+
+for(sequence_type in sequence_types){
+
+  set.seed(1)
+  dists <- vic_dists_cgmlst %>%
+    filter(paste0("ST", ST_new.x) == sequence_type) %>%
+    filter(SNPs <= 100) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  #Extract sources from genotypic/metadata table
+  sources <- genometa %>% filter(paste0("ST",ST_new) == sequence_type) %>% select(name, Revised_Source_Niche)
+
+  #Set a colour for each source
+  sources <- sources %>%
+    mutate(color = case_when(
+      Revised_Source_Niche == "Captive Animal" ~ "#b5467395",
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Waste" ~ "#6d83da95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
+    ))
+  
+  # Convert data frame to edge list for igraph
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  #Get a list of vertex names
+  g_vertex_names <- V(g)$name 
+  
+  # Match colors to vertices based on names
+  vertex_color_vector <- sources$color[match(g_vertex_names, sources$name)]
+  
+  # Plot the graph
+  pdf(file = paste0("../Revision/Network_graphs/Network_Vic_subset_",
+                    sequence_type,
+                    ".pdf"),
+      width = 11.69,
+      height = 8.27)
+  
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3,
+                           ifelse(E(g)$SNPs <= 50, 2, 1))
+  
+  
+  set.seed(1)
+  
+  plot(g, edge.width = E(g)$thickness,
+       rescale = TRUE,
+       main = sequence_type,
+       vertex.size = 3,
+       vertex.label = NA,
+       vertex.color = vertex_color_vector,
+       )
+  
+  legend("bottomleft",
+         legend = c("Companion Animal", 
+             "Environmental", 
+             "Food", 
+             "Human", 
+             "Livestock",
+             "Wild Animal"),
+         fill = c(
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  
+  dev.off()
+
+  
+}
+
+
+
+genometa %>%
+  filter(name %in% vic_subset) %>% 
+  filter(paste0("ST",ST_new) %in% sequence_types) %>%
+    group_by(ST_new, Collection_Year, Revised_Source_Niche) %>%
+    tally() %>%
+    ggplot(aes(x = Collection_Year, y = n, fill = Revised_Source_Niche)) +
+    geom_col(position = "stack") + # Stacked bar chart
+    facet_wrap(~ ST_new) + # Facet by State
+    labs(
+        title = "Number of Samples Collected by State and Year",
+        x = "Collection Year",
+        y = "Count",
+        fill = "Source Niche"
+    ) +
+scale_fill_manual(
+        values = c(source_cols),
+        na.value = 'grey'
+        ) +
+    theme_minimal() # Use a minimal theme for better visualization
+
+```
+
+
+```{r}
+bird_IDs <- read_delim("../delims/FH_bird_IDs.txt", delim = "\t")
+
+bird_IDs <- bird_IDs %>% filter(Bird != "#N/A")
+
+birdy <- bird_IDs %>% rename("Sample 1" = "Genome...2") %>% inner_join(vic_dists_cgmlst, by = "Sample 1")
+
+birdy <- bird_IDs %>% rename("Sample 2" = "Genome...2") %>% inner_join(birdy, by = "Sample 2")
+
+bird_IDs <- bird_IDs %>% rename('name' = `Genome...2`) %>% select(name, Bird)
+
+for(sequence_type in sequence_types){
+
+  set.seed(1)
+  dists <- birdy %>%
+    filter(paste0("ST", ST_new.x) == sequence_type) %>%
+    filter(SNPs <= 100) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  #Extract sources from genotypic/metadata table
+  sources <- genometa %>% full_join(bird_IDs, by = 'name') %>% filter(paste0("ST",ST_new) == sequence_type) %>% select(name, Revised_Source_Niche, Bird)
+
+  #Set a colour for each source
+  sources <- sources %>%
+    mutate(color = case_when(
+      Revised_Source_Niche == "Captive Animal" ~ "#b5467395",
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Waste" ~ "#6d83da95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
+    ))
+  
+  # Convert data frame to edge list for igraph
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  #Get a list of vertex names
+  g_vertex_names <- V(g)$name 
+  
+  # Match colors to vertices based on names
+  vertex_color_vector <- sources$color[match(g_vertex_names, sources$name)]
+  
+  vertex_bird_ID <- sources$Bird[match(g_vertex_names, sources$name)]
+  
+  # Plot the graph
+  pdf(file = paste0("../Revision/Network_graphs/birdy_Network_Vic_subset_",
+                    sequence_type,
+                    ".pdf"),
+      width = 11.69,
+      height = 8.27)
+  
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3,
+                           ifelse(E(g)$SNPs <= 50, 2, 1))
+  
+  
+  set.seed(1)
+  
+  plot(g, edge.width = E(g)$thickness,
+       rescale = TRUE,
+       main = sequence_type,
+       vertex.size = 3,
+       vertex.label = vertex_bird_ID,
+       vertex.color = vertex_color_vector,
+       )
+  
+  legend("bottomleft",
+         legend = c("Companion Animal", 
+             "Environmental", 
+             "Food", 
+             "Human", 
+             "Livestock",
+             "Wild Animal"),
+         fill = c(
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  
+  dev.off()
+
+  
+}
+```
+
+```{r}
+
+poultry_non_dupes <- bird_IDs %>% group_by(Bird) %>% slice_head(n = 1)
+
+poultry_dupes <- bird_IDs %>% filter(name %nin% poultry_non_dupes$name)
+
+# Process each unique sequence type in distances2
+for(sequence_type in unique(distances2$ST)) {
+  set.seed(1)  # For reproducibility
+
+  # Filter and select distances
+  dists <- distances2 %>%
+    filter(`Sample 1` %nin% poultry_dupes$name & `Sample 2` %nin% poultry_dupes$name) %>%
+    filter(ST == sequence_type, SNPs <= 100) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  # Extract sources from genotypic/metadata table
+  sources <- genometa %>%
+    filter(paste0("ST", ST_new) == sequence_type) %>%
+    select(name, Revised_Source_Niche) %>%
+    mutate(color = case_when(
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
+    ))
+
+  # Create igraph graph from edge list
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  # Assign colors to vertices based on names
+  vertex_color_vector <- sources$color[match(V(g)$name, sources$name)]
+  
+  # Set edge thickness based on SNPs
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3, ifelse(E(g)$SNPs <= 50, 2, 1))
+
+  # Plot graph
+  pdf(file = paste0("../figures/Network_graphs/New_Network_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  plot(g, edge.width = E(g)$thickness, rescale = TRUE, main = paste0("New ", sequence_type), vertex.size = 3, vertex.label = NA, vertex.color = vertex_color_vector)
+  legend("bottomleft",
+         legend = c("Companion Animal", 
+             "Environmental", 
+             "Food", 
+             "Human", 
+             "Livestock", 
+             "Wild Animal"),
+         fill = c(
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  dev.off()
+  
+  # Detect communities
+  clusters_walktrap <- cluster_walktrap(g)
+  
+  # Plot communities
+  pdf(file = paste0("../figures/Network_graphs/New_Communities_", sequence_type, ".pdf"), width = 11.69, height = 8.27)
+  plot(clusters_walktrap, g, edge.width = E(g)$thickness, rescale = TRUE, main = sequence_type, vertex.size = 3, vertex.label = NA)
+  dev.off()
+}
+```
+
+```{r}
+genometa %>%
+    group_by(State, Collection_Year, Revised_Source_Niche) %>%
+    tally() %>%
+    ggplot(aes(x = Collection_Year, y = n, fill = Revised_Source_Niche)) +
+    geom_col(position = "stack") + # Stacked bar chart
+    facet_wrap(~ State) + # Facet by State
+    labs(
+        title = "Number of Samples Collected by State and Year",
+        x = "Collection Year",
+        y = "Count",
+        fill = "Source Niche"
+    )  +
+scale_fill_manual(
+        values = c(source_cols),
+        na.value = 'grey'
+        ) +
+    theme_minimal() # Use a minimal theme for better visualization
+
+vic_subset <- genometa %>% filter(State == "VIC", Collection_Year %in% c(2013, 2014, 2015, 2016, 2017)) %>% pull(name)
+
+vic_dists_cgmlst <- cgmlst_dists %>% filter(`Sample 1` %in% vic_subset & `Sample 2` %in% vic_subset)
+
+vic_dists_cgmlst <- genometa %>% select(name, Revised_Source_Niche, ST_new, Collection_Year) %>% rename(`Sample 1` = name) %>% inner_join(vic_dists_cgmlst, by = "Sample 1")
+
+vic_dists_cgmlst <- genometa %>% select(name, Revised_Source_Niche, ST_new, Collection_Year) %>% rename(`Sample 2` = name) %>% inner_join(vic_dists_cgmlst, by = "Sample 2")
+
+SNPs_subset <- df_all_ST %>% filter(`Sample 1` %in% vic_dists_cgmlst$`Sample 1` & `Sample 2`  %in% vic_dists_cgmlst$`Sample 2`) %>% select(`Sample 1`, `Sample 2`, SNPs)
+
+vic_dists_cgmlst <- left_join(vic_dists_cgmlst, SNPs_subset, by = c("Sample 1", "Sample 2"))
+
+vic_dists_cgmlst <- vic_dists_cgmlst %>% filter(ST_new.x == ST_new.y) %>% filter(!is.na(SNPs))
+
+vic_dists_cgmlst_no_dupe <- vic_dists_cgmlst %>% filter(`Sample 1` %nin% poultry_dupes$name & `Sample 2` %nin% poultry_dupes$name)
+
+for(sequence_type in sequence_types){
+
+  set.seed(1)
+  dists <- vic_dists_cgmlst_no_dupe %>%
+    filter(paste0("ST", ST_new.x) == sequence_type) %>%
+    filter(SNPs <= 100) %>%
+    select(`Sample 1`, `Sample 2`, SNPs)
+  
+  #Extract sources from genotypic/metadata table
+  sources <- genometa %>% filter(paste0("ST",ST_new) == sequence_type) %>% select(name, Revised_Source_Niche, Collection_Year)
+
+  #Set a colour for each source
+  sources <- sources %>%
+    mutate(color = case_when(
+      Revised_Source_Niche == "Captive Animal" ~ "#b5467395",
+      Revised_Source_Niche == "Companion Animal" ~ "#59398d95",
+      Revised_Source_Niche == "Environmental" ~ "#709b4695",
+      Revised_Source_Niche == "Food" ~ "#c09f3d95",
+      Revised_Source_Niche == "Human" ~ "#48c59595",
+      Revised_Source_Niche == "Livestock" ~ "#c26bbc95",
+      Revised_Source_Niche == "Waste" ~ "#6d83da95",
+      Revised_Source_Niche == "Wild Animal" ~ "#b9553d95"
+    ))
+  
+  # Convert data frame to edge list for igraph
+  g <- graph_from_data_frame(d = dists, directed = FALSE)
+  
+  #Get a list of vertex names
+  g_vertex_names <- V(g)$name 
+  
+  # Match colors to vertices based on names
+  vertex_color_vector <- sources$color[match(g_vertex_names, sources$name)]
+  vertex_year_vector <- sources$Collection_Year[match(g_vertex_names, sources$name)]
+  
+  # Plot the graph
+  pdf(file = paste0("../Revision/Network_graphs/Network_Vic_subset_no_dupe_",
+                    sequence_type,
+                    ".pdf"),
+      width = 11.69,
+      height = 8.27)
+  
+  E(g)$thickness <- ifelse(E(g)$SNPs <= 20, 3,
+                           ifelse(E(g)$SNPs <= 50, 2, 1))
+  
+  
+  set.seed(1)
+  
+  plot(g, edge.width = E(g)$thickness,
+       rescale = TRUE,
+       main = sequence_type,
+       vertex.size = 8,
+       vertex.label = vertex_year_vector,
+       vertex.color = vertex_color_vector,
+       )
+  
+  legend("bottomleft",
+         legend = c("Companion Animal", 
+             "Environmental", 
+             "Food", 
+             "Human", 
+             "Livestock",
+             "Wild Animal"),
+         fill = c(
+           "#59398d95",
+           "#709b4695",
+           "#c09f3d95",
+           "#48c59595",
+           "#c26bbc95",
+           "#b9553d95"),
+         pch=19,
+         bty = "n",
+         pt.cex = 1,
+         cex = 1,
+         text.col="black" ,
+         horiz = FALSE)
+  
+  dev.off()
+
+  
+}
+```
+
+
+```{r}
+genometa %>%
+  filter(name %in% vic_subset, name %nin% poultry_dupes$name) %>% 
+  filter(paste0("ST",ST_new) %in% sequence_types) %>%
+    group_by(ST_new, Collection_Year, Revised_Source_Niche) %>%
+    tally() %>%
+    ggplot(aes(x = Collection_Year, y = n, fill = Revised_Source_Niche)) +
+    geom_col(position = "stack") + # Stacked bar chart
+    facet_wrap(~ ST_new) + # Facet by State
+    labs(
+        title = "Number of Samples Collected by ST and Source",
+        x = "Collection Year",
+        y = "Count",
+        fill = "Source Niche"
+    ) +
+scale_fill_manual(
+        values = c(source_cols),
+        na.value = 'grey'
+        ) +
+    theme_minimal() # Use a minimal theme for better visualization
+
+```
+
+```{r}
+genometa %>%
+    group_by(Collection_Year, Revised_Source_Niche) %>%
+    tally() %>%
+    ggplot(aes(x = Collection_Year, y = n, fill = Revised_Source_Niche)) +
+    geom_col(position = "stack") + # Stacked bar chart
+    facet_wrap(~ Revised_Source_Niche) + # Facet by State
+    labs(
+        title = "Number of Samples Collected by Year and Source",
+        x = "Collection Year",
+        y = "Count",
+        fill = "Source Niche"
+    ) +
+    scale_fill_manual(
+        values = c(source_cols),
+        na.value = 'grey'
+    ) +
+    theme_minimal()
 ```
 
