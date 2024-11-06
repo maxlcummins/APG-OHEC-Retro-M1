@@ -1,0 +1,41 @@
+Source Combination	Sequence Type	Count of Strain Pairs
+Comp. Animal/Environ.	ST95	1
+Comp. Animal/Food	ST117	5
+Comp. Animal/Food	ST57	2
+Comp. Animal/Human	ST117	4
+Comp. Animal/Human	ST1193	930
+Comp. Animal/Human	ST131	3486
+Comp. Animal/Human	ST457	1
+Comp. Animal/Human	ST648	19
+Comp. Animal/Human	ST80	89
+Comp. Animal/Human	ST95	45
+Comp. Animal/Human	ST963	163
+Comp. Animal/Livestock	ST117	24
+Comp. Animal/Wild Animal	ST1193	12
+Comp. Animal/Wild Animal	ST131	147
+Comp. Animal/Wild Animal	ST457	8
+Comp. Animal/Wild Animal	ST963	183
+Environ./Food	ST57	8
+Environ./Human	ST69	2
+Environ./Human	ST95	8
+Environ./Livestock	ST57	1
+Environ./Wild Animal	ST69	2
+Food/Human	ST117	4
+Food/Human	ST57	2
+Food/Human	ST95	252
+Food/Livestock	ST117	36
+Food/Livestock	ST57	44
+Food/Livestock	ST69	1
+Food/Livestock	ST95	76
+Human/Livestock	ST117	12
+Human/Livestock	ST131	2
+Human/Livestock	ST57	3
+Human/Livestock	ST69	87
+Human/Livestock	ST95	67
+Human/Wild Animal	ST1193	360
+Human/Wild Animal	ST131	3070
+Human/Wild Animal	ST457	65
+Human/Wild Animal	ST648	49
+Human/Wild Animal	ST69	35
+Human/Wild Animal	ST963	1330
+Livestock/Wild Animal	ST69	44
