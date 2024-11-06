@@ -1074,6 +1074,16 @@ df_all_ST_filtered_SNPs_all %>%
 #Save our file
 ggsave(filename = "../figures/Final_Figures/Figure_5.pdf", width = 8.27, height = 11.69, units = "in", dpi = 300)
 
+#Create a supplementary Table with boxplot counts
+df_all_ST_filtered_SNPs_all %>%
+    mutate(source_combo = str_replace(source_combo, 'Companion Animal', 'Comp. Animal')) %>% 
+    mutate(source_combo = str_replace(source_combo, 'Environmental', 'Environ.')) %>% 
+    filter(Revised_Source_Niche.x != Revised_Source_Niche.y) %>% 
+    filter(value < 40)  %>% 
+    mutate(value = as.factor(value)) %>%
+    rename('Allelic\nDistance\n(cgMLST)' = value) %>%
+    group_by(source_combo, ST.x) %>% tally() %>% rename("Source Combination" = source_combo, "Sequence Type" = ST.x, "Count of Strain Pairs" = n) %>% write_delim("../figures/Final_Figures/Supplementary_Material/Supplementary_Table_3.tsv", delim = "\t")
+
 ```
 
 ## Supplementary Material
@@ -1090,7 +1100,7 @@ genometa %>%
          'Source Type' = Revised_Source_Type,
          "Biosample (Pending allocations)" = 'Sample_ID',
          'IncF RST' = "IncF_RST..IncF RST") %>%
-  write_delim("../Supplementary_Material/Supp_Table_1.tsv", delim = "\t")
+  write_delim("../figures/Final_Figures/Supplementary_Material/Supp_Table_1.tsv", delim = "\t")
 ```
 
 Supplementary Figure X
@@ -1123,7 +1133,7 @@ plot2 <- df_all_ST_filtered_SNPs_all %>% rename("ST" = "ST.x") %>% filter(SNPs <
         stat_cor(method = "spearman", aes(label = paste(..rr.label.., ..p.label.., sep = "~")), color = "red", geom = "label") +
         scale_color_manual(values = ST_cols)
 
-#ggsave(filename = "../Supplementary_Material/Supplementary_Figure_3A.pdf", plot = plot2, width = 11.69, height = 8.27, units = "in", dpi = 300)
+#ggsave(filename = "../figures/Final_Figures/Supplementary_Material/Supplementary_Figure_3A.pdf", plot = plot2, width = 11.69, height = 8.27, units = "in", dpi = 300)
 
 ```
 
@@ -1272,7 +1282,7 @@ SNP_dists %>% write_delim("../Supplementary_Material/SNP_distances.txt", delim =
 long_distances_w_source <- df_all_ST_filtered_SNPs_all %>% select(`Sample 1`, `Sample 2`, ST.x, ST.y, SNPs, value, Revised_Source_Niche.x, Revised_Source_Niche.y) %>% rename("Allelic Distance" = value, "Source - Sample 1" = Revised_Source_Niche.x,  "Source - Sample 2" = Revised_Source_Niche.y, "Sequence Type - Sample 1" = ST.x, "Sequence Type - Sample 2" = ST.y)
 
 #Write to file
-long_distances_w_source %>% write_delim("../Supplementary_Material/Pairwise_SNP_and_allelic_distances_with_source.txt", delim = "\t")
+long_distances_w_source %>% write_delim("../figures/Final_Figures/Supplementary_Material/Supp_Table_2.tsv", delim = "\t")
 ```
 
 ## Reviewer requests
