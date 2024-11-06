@@ -1311,18 +1311,18 @@ S1_Urban_Zoo <- read_delim("../delims/Extra_metadata_Urban_Zoo_S1.txt",
 
 UZ_meta <- S1_Urban_Zoo %>% mutate("Sample ID" = str_replace(Accession, ".*\\(", "")) %>% mutate("Sample ID" = str_replace(`Sample ID`, "\\)", "")) %>% full_join(Metadata_Urban_Zoo, by = "Sample ID")
 
-UZ_clusters <- read_delim("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.clusters.tsv",
+UZ_clusters <- read_delim("../Revision/APG_manuscript_1_UZ.clusters.tsv",
                                  delim = "\t", escape_double = FALSE,
                                  trim_ws = TRUE)
 
 UZ_clusters <- UZ_clusters %>% mutate(ID = str_replace(ID, ".result", "")) 
 
-# If "../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv.gz" is present and "../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv" isnt, unzip the file
-if (file.exists("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv.gz") & !file.exists("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv")) {
-  system("gunzip ../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv.gz")
+# If "../Revision/APG_manuscript_1_UZ.distances.tsv.gz" is present and "../Revision/APG_manuscript_1_UZ.distances.tsv" isnt, unzip the file
+if (file.exists("../Revision/APG_manuscript_1_UZ.distances.tsv.gz") & !file.exists("../Revision/APG_manuscript_1_UZ.distances.tsv")) {
+  system("gunzip ../Revision/APG_manuscript_1_UZ.distances.tsv.gz")
 }
 
-UZ_dists <- read_delim("../../APG-OHEC-Retro-M1/Revision/APG_manuscript_1_UZ.distances.tsv",
+UZ_dists <- read_delim("../Revision/APG_manuscript_1_UZ.distances.tsv",
                                  delim = "\t", escape_double = FALSE,
                                  trim_ws = TRUE)
 
