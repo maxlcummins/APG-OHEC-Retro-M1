@@ -1486,6 +1486,16 @@ cgmlt_clusts <- graph_from_data_frame(d = cgmlst_dists, directed = FALSE) %>% cl
 
 ```{r}
 
+bird_IDs <- read_delim("../delims/FH_bird_IDs.txt", delim = "\t")
+
+bird_IDs <- bird_IDs %>% filter(Bird != "#N/A")
+
+bird_IDs <- bird_IDs %>% rename('name' = `Genome...2`) %>% select(name, Bird)
+
+poultry_non_dupes <- bird_IDs %>% group_by(Bird) %>% slice_head(n = 1)
+
+poultry_dupes <- bird_IDs %>% filter(name %nin% poultry_non_dupes$name)
+
 genometa %>%
   filter(name %nin% poultry_dupes$name) %>%
     group_by(State, Collection_Year, Revised_Source_Niche) %>%
