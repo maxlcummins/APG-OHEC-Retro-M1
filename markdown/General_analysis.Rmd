@@ -12,6 +12,11 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("ggtree")
+
 #Read in our packages
 library(tidyverse)
 library(vroom)
@@ -1330,6 +1335,12 @@ UZ_dists <- UZ_meta %>% rename("Sample 1" = "Assembly barcode(Assembly stats)", 
 UZ_dists <- UZ_dists %>% filter(ST.x == ST.y) %>% filter(!is.na(Source_Level3.x)) %>% filter(!is.na(Source_Level3.y))
 
 UZ_dists_less_100 <- UZ_dists %>% filter(SNPs <= 100)
+
+# Create a folder "../Revision/UZ_Network_graphs/" if it doesnt exist
+if (!dir.exists("../Revision/UZ_Network_graphs/")) {
+  dir.create("../Revision/UZ_Network_graphs/")
+}
+
 
 for(sequence_type in unique(UZ_dists_less_100$ST.x)){
 
