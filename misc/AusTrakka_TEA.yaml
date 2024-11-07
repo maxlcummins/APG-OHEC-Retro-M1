@@ -1,0 +1,246 @@
+### User info
+email: max.cummins@uts.edu.au
+
+### General configuration variables
+#Input type - assemblies or reads
+input_type: assemblies
+
+# Prefix for output files - here the collection name or an abbreviation for the relevant manuscript might be a good choice
+prefix: AusTrakka_TEA
+
+# Path to your genomic data
+#This contains only the TEA genomes. Newline contains both them and the old AusTrakka ones
+#genome_path: /projects/AusGEM/Users/Max/Manuscripts/Austrakka/pipelord/data/gordon_assemblies/ncbi_dataset/data/assemblies
+#genome_path: /projects/AusGEM/AusTrakka_all_assemblies_symlinks
+#New path in the new projects volume
+genome_path: /projects/auspathogen/symlinks_TEA_plus_quarantine
+
+# Path to blast executable
+blast_bin: resources/tools/ncbi-blast-2.13.0+/bin
+
+# Path to project directory where you want your output to go
+outdir: /projects/AusGEM/Users/Max/Manuscripts/Austrakka/pipelord/results
+
+# Base output directory for logs
+base_log_outdir: /projects/AusGEM/Users/Max/Manuscripts/Austrakka/pipelord/results/logs
+
+#cgMLST schemes - this takes a long time to download and prepare.
+cgmlst_schemes: "" #['ecoli','salmonella']
+
+#Module selection - QC pipeline
+
+#Module selection - default genotyping pipeline
+genotype_modules:
+  run_genome_annotation: Yes
+  genome_annotater: "bakta"
+  run_plasmid_mlst: Yes
+  run_genome_assembly: Yes
+  run_assembly_stats: No
+  run_abricate: Yes
+  run_abritamr: Yes
+  run_abricate_plasmid: No
+  run_pointfinder: Yes
+  run_kraken2_and_bracken: No
+  run_mlst: Yes
+  run_spifinder: No
+  run_cgmlstfinder: No
+  run_fimtyper: Yes
+  run_ectyper: Yes
+  run_phylogrouping: Yes
+  run_mobsuite: Yes
+  run_summarise: No # in development
+
+treebuild_modules:
+  run_roary: No
+  run_panaroo: Yes
+  run_panaroo_QC: No
+  run_core_genome_treebuild_snp_sites: No
+  run_core_genome_treebuild_full: No
+
+#Module selection - treebuilding pipeline
+qc_modules:
+  run_kraken2_and_bracken: Yes
+  run_gunc: No
+  run_checkm: Yes
+  run_genome_assembly: Yes
+  run_assembly_stats: Yes
+  run_qc_summary: Yes
+  run_multiqc_fastp: Yes
+
+### Pointfinder config
+# #E. coli
+pointfinder_species: "-s escherichia_coli"
+#pointfinder_species: "-s salmonella"
+
+### abritamr config
+#Options:
+#Acinetobacter_baumannii,Campylobacter,Enterococcus_faecalis,Enterococcus_faecium
+#Escherichia,Klebsiella,Salmonella,Staphylococcus_aureus,Staphylococcus_pseudintermedius
+#Streptococcus_agalactiae,Streptococcus_pneumoniae,Streptococcus_pyogenes,Vibrio_cholerae
+abritamr_species: "Escherichia"
+
+### Kraken2lord
+krakendb: /projects/AusGEM/databases/kraken2/bacteria
+
+### Abricatelord
+# Path to gene db location
+gene_db_location: resources/dbs/abricate
+
+# Name of gene databases you want to screen for
+gene_dbs:
+  - ISfinder_Feb_2020
+  - EC_custom
+  - card
+  - plasmidfinder
+  - ecoh
+  - vfdb
+  - colV_zoetis
+  - dfrA5_848
+
+plasmid_screen_db:
+  - pCERC4
+  - pAPEC_O1_ColBM
+  - pAPEC_O2_ColV
+  - pUTI89
+  - pBCE049_1
+  - pSF_088_nores
+  - pU1_F51_B10
+  - pEC244_2
+  - pAPEC_O78_ColV
+  - pAMSC2
+  - pACN001_B
+
+# Minimum nucleotide ID (default for abricate is 75)
+abricate_minimum_id: 75
+# Minimum coverage (default for abricate is 0)
+#abricate_minimum_id: 0
+
+###Configuration for BLASTlord
+# Path to blast databases:
+BLAST_dbs: /home/malcummi/Data/BlastDBs
+
+#Configuration for BIGSI
+#bigsi_refseq: /projects/AusGEM/Users/Max/Manuscripts/ST95/data/bigsi
+
+## ##Configuration file for pMLSTlord
+# pMLST scheme
+pmlst_scheme:
+  - incac
+  - incf
+  - inchi1
+  - inchi2
+  - inci1
+  - incn
+  - pbssb1-family
+
+# #Below is for fastas. If you want to use reads, replace the blast path with the path to kma
+pmlst_tool: "-mp"
+# Path to your pMLST database
+pMLST_db_path: resources/tools/pmlst/pmlst_db
+# Path to pMLST tool
+pMLST_script_path: resources/tools/pmlst/pmlst.py
+
+## ## Configuration for roary
+roary_core_req: 99
+
+## ## Configuration for panaroo
+panaroo:
+  #Percent of genomes required to carry a gene for it to be considered core
+  core_req: 0.98
+  ## Panaroo aligner for core genome alignment. Options: prank, clustal, mafft
+  aligner: "mafft"
+  ## Panaroo strictness options: 'strict', 'moderate', 'sensitive'
+  strictness: "strict"
+
+#Subset file of file names
+subset_fofn:
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_00
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_01
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_02
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_03
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_04
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_05
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_06
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_07
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_08
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_09
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_10
+  #- /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_chunk_11
+  - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/misc/fofns/AusTrakka_TEA_Pass_cgMLST.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST101_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST10_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST117_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST1193_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST11_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST127_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST12_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST131_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST155_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST167_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST216_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST354_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST361_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST372_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST38_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST405_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST410_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST457_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST57_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST58_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST641_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST648_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST69_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST73_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST746_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST88_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST95_names.csv
+  # - /projects/AusGEM/Users/Max/Manuscripts/Austrakka/fofns/ST963_names.csv
+#Subset name
+subset_name:
+  #- AusTrakka_TEA_chunk_00
+  #- AusTrakka_TEA_chunk_01
+  #- AusTrakka_TEA_chunk_02
+  #- AusTrakka_TEA_chunk_03
+  #- AusTrakka_TEA_chunk_04
+  #- AusTrakka_TEA_chunk_05
+  #- AusTrakka_TEA_chunk_06
+  #- AusTrakka_TEA_chunk_07
+  #- AusTrakka_TEA_chunk_08
+  #- AusTrakka_TEA_chunk_09
+  #- AusTrakka_TEA_chunk_10
+  #- AusTrakka_TEA_chunk_11
+  - AusTrakka_TEA_Pass_cgMLST
+  # - ST101
+  # - ST10
+  # - ST117
+  # - ST1193
+  # - ST11
+  # - ST127
+  # - ST12
+  # - ST131
+  # - ST155
+  # - ST167
+  # - ST216
+  # - ST354
+  # - ST361
+  # - ST372
+  # - ST38
+  # - ST405
+  # - ST410
+  # - ST457
+  # - ST57
+  # - ST58
+  # - ST641
+  # - ST648
+  # - ST69
+  # - ST73
+  # - ST746
+  # - ST88
+  # - ST95
+  # - ST963
+
+#Path to gunc database
+gunc_db_path: /projects/AusGEM/databases/gunc_db
+
+#Path to bakta database
+bakta_db: /projects/AusGEM/databases/bakta/db
