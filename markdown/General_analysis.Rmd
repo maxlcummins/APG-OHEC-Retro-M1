@@ -1130,7 +1130,7 @@ df_all_ST_filtered_SNPs_all %>%
     filter(value < 40)  %>% 
     mutate(value = as.factor(value)) %>%
     rename('Allelic\nDistance\n(cgMLST)' = value) %>%
-    group_by(source_combo, ST.x) %>% tally() %>% rename("Source Combination" = source_combo, "Sequence Type" = ST.x, "Count of Strain Pairs" = n) %>% write_delim("../figures/Final_Figures/Supplementary_Material/Supplementary_Table_3.tsv", delim = "\t")
+    group_by(source_combo, ST.x) %>% tally() %>% rename("Source Combination" = source_combo, "Sequence Type" = ST.x, "Count of Strain Pairs" = n) %>% write_delim("../figures/Final_Figures/Supplementary_Material/Supplementary_Table_4.tsv", delim = "\t")
 
 ```
 
